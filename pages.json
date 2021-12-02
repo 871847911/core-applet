@@ -1,0 +1,646 @@
+{
+  "easycom": {
+    "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue",
+    "^cl-(.*)": "@/components/cl-$1/index.vue"
+  },
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "全景V次方",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/orders/orders",
+      "style": {
+        "navigationBarTitleText": "订单管理",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/homestay/homestay",
+      "style": {
+        "navigationBarTitleText": "民宿优选",
+        "navigationBarBackgroundColor": "#fff"
+      }
+    },
+    {
+      "path": "pages/user/user",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/shop/shop",
+      "style": {
+        "navigationBarTitleText": "在线商城",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "custom"
+      }
+    },
+
+    {
+      "path": "pages/homestay/search/search",
+      "style": {
+        "navigationBarTitleText": "搜索页面",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#fff"
+      }
+    },
+    {
+      "path": "pages/homestay/destination/destination",
+      "style": {
+        "navigationBarTitleText": "目的地",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#fff"
+      }
+    },
+    {
+      "path": "pages/homestay/group/group",
+      "style": {
+        "navigationBarTitleText": "团建民宿",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#fff"
+      }
+    },
+
+    {
+      "path": "pages/homestay/discount/discount",
+      "style": {
+        "navigationBarTitleText": "折扣尾房",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#fff"
+      }
+    },
+    {
+      "path": "pages/homestay/parenting/parenting",
+      "style": {
+        "navigationBarTitleText": "亲子陪娃",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/homestay/region/region",
+      "style": {
+        "navigationBarTitleText": "地区",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "custom", // 隐藏系统导航栏
+        "navigationBarBackgroundColor": "#fff"
+      }
+    },
+    {
+      "path": "pages/shop/cart/cart",
+      "style": {
+        "navigationBarTitleText": "购物车",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/shop/list/list",
+      "style": {
+        "navigationBarTitleText": "粮油调味",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/shop/shopdetails/shopdetails",
+      "style": {
+        "navigationBarTitleText": "商品详情",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/shop/productreviews/productreviews",
+      "style": {
+        "navigationBarTitleText": "商品评论",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/shop/confirmorder/confirmorder",
+      "style": {
+        "navigationBarTitleText": "确认订单",
+        "enablePullDownRefresh": false
+      }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "pages/order",
+      "pages": [
+        {
+          "path": "order/order",
+          "style": {
+            "navigationBarTitleText": "民宿限购",
+            "enablePullDownRefresh": false
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/one",
+      "pages": [
+        {
+          "path": "one/one",
+          "style": {
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": false,
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "purchase/purchase",
+          "style": {
+            "navigationBarTitleText": "民宿限购",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "special/special",
+          "style": {
+            "navigationBarTitleText": "限时特价",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "comment/comment",
+          "style": {
+            "navigationBarTitleText": "住客评论",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "contactus/contactus",
+          "style": {
+            "navigationBarTitleText": "联系我们",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "hothouse/hothouse",
+          "style": {
+            "navigationBarTitleText": "热销房型",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "housedetails/housedetails",
+          "style": {
+            "navigationBarTitleText": "房型详情",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "yuyue/yuyue",
+          "style": {
+            "navigationBarTitleText": "预约",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "submit/submit",
+          "style": {
+            "navigationBarTitleText": "提交订单",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "resultssuccess/resultssuccess",
+          "style": {
+            "navigationBarTitleText": "支付结果成功",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "resultsfail/resultsfail",
+          "style": {
+            "navigationBarTitleText": "支付结果待支付",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "picture/picture",
+          "style": {
+            "navigationBarTitleText": "房型图片",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "roomorder/roomorder",
+          "style": {
+            "navigationBarTitleText": "房间预约",
+            "enablePullDownRefresh": false,
+            "navigationStyle": "custom"
+          }
+        },
+
+        {
+          "path": "scenicspot/scenicspot",
+          "style": {
+            "navigationBarTitleText": "周边景点",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "scenicspotdetails/scenicspotdetails",
+          "style": {
+            "navigationBarTitleText": "景点介绍",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "passenger/passenger",
+          "style": {
+            "navigationBarTitleText": "旅客评价",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/my",
+      "name": "my",
+      "pages": [
+        {
+          "path": "remaining/remaining",
+          "style": {
+            "navigationBarTitleText": "余额",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "trade/trade",
+          "style": {
+            "navigationBarTitleText": "交易明细",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "integral/integral",
+          "style": {
+            "navigationBarTitleText": "积分",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "mydetails/mydetails",
+          "style": {
+            "navigationBarTitleText": "积分详情",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "submitorder/submitorder",
+          "style": {
+            "navigationBarTitleText": "提交订单",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "coupon/coupon",
+          "style": {
+            "navigationBarTitleText": "优惠券",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "collection/collection",
+          "style": {
+            "navigationBarTitleText": "收藏",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "address/address",
+          "style": {
+            "navigationBarTitleText": "地址管理",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "newaddress/newaddress",
+          "style": {
+            "navigationBarTitleText": "新建收货地址",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff"
+          }
+        },
+        {
+          "path": "join/join",
+          "style": {
+            "navigationBarTitleText": "我要加盟",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "setting/setting",
+          "style": {
+            "navigationBarTitleText": "设置",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "browse/browse",
+          "style": {
+            "navigationBarTitleText": "浏览页面",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "invoice/invoice",
+          "style": {
+            "navigationBarTitleText": "发票服务",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "incoiceinformation/incoiceinformation",
+          "style": {
+            "navigationBarTitleText": "发票信息",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "invoicedetails/invoicedetails",
+          "style": {
+            "navigationBarTitleText": "发票详情",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "editinvoice/editinvoice",
+          "style": {
+            "navigationBarTitleText": "编辑发票信息",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "news/news",
+          "style": {
+            "navigationBarTitleText": "消息",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "systemnews/systemnews",
+          "style": {
+            "navigationBarTitleText": "系统消息",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "logistics/logistics",
+          "style": {
+            "navigationBarTitleText": "物流消息",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "myorder/myorder",
+          "style": {
+            "navigationBarTitleText": "我的订单",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "payment/payment",
+          "style": {
+            "navigationBarTitleText": "待付款",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "pending/pending",
+          "style": {
+            "navigationBarTitleText": "待处理",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "checkin/checkin",
+          "style": {
+            "navigationBarTitleText": "待入住",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "shoppayment/shoppayment",
+          "style": {
+            "navigationBarTitleText": "待付款",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "shoppending/shoppending",
+          "style": {
+            "navigationBarTitleText": "待处理",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "shopcomplete/shopcomplete",
+          "style": {
+            "navigationBarTitleText": "已完成",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "shopreceived/shopreceived",
+          "style": {
+            "navigationBarTitleText": "待收货",
+            "enablePullDownRefresh": false,
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        },
+        {
+          "path": "complaint/complaint",
+          "style": {
+            "navigationBarTitleText": "订单投诉",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "evaluation/evaluation",
+          "style": {
+            "navigationBarTitleText": "评价中心",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "center/center",
+          "style": {
+            "navigationBarTitleText": "评价中心",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "shopcenter/shopcenter",
+          "style": {
+            "navigationBarTitleText": "订单投诉",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "aftersales/aftersales",
+          "style": {
+            "navigationBarTitleText": "选择售后类型",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "return/return",
+          "style": {
+            "navigationBarTitleText": "申请退货退款",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "progress/progress",
+          "style": {
+            "navigationBarTitleText": "退款退货进度",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "exchange/exchange",
+          "style": {
+            "navigationBarTitleText": "申请换货",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "exchanges/exchanges",
+          "style": {
+            "navigationBarTitleText": "换货进度",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "feedback/feedback",
+          "style": {
+            "navigationBarTitleText": "意见反馈",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "about/about",
+          "style": {
+            "navigationBarTitleText": "关于我们",
+            "enablePullDownRefresh": false
+          }
+        },
+
+        {
+          "path": "remain/remain",
+          "style": {
+            "navigationBarTitleText": "余额",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "editaddress/editaddress",
+          "style": {
+            "navigationBarTitleText": "编辑新建地址",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "information/information",
+          "style": {
+            "navigationBarTitleText": "账号与安全",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "setname/setname",
+          "style": {
+            "navigationBarTitleText": "设置姓名",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "verification/verification",
+          "style": {
+            "navigationBarTitleText": "账号验证",
+            "enablePullDownRefresh": false
+          }
+        }
+      ]
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uView",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#909399",
+    "selectedColor": "#303133",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabbar/index.png",
+        "selectedIconPath": "static/tabbar/index-selected.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/orders/orders",
+        "iconPath": "static/tabbar/B&B.png",
+        "selectedIconPath": "static/tabbar/B&B-selected.png",
+        "text": "订单管理"
+      },
+      {
+        "pagePath": "pages/homestay/homestay",
+        "iconPath": "static/tabbar/B&B.png",
+        "selectedIconPath": "static/tabbar/B&B-selected.png",
+        "text": "民宿优选"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "iconPath": "static/tabbar/shop.png",
+        "selectedIconPath": "static/tabbar/shop-selected.png",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "iconPath": "static/tabbar/my.png",
+        "selectedIconPath": "static/tabbar/my-selected.png",
+        "text": "我的"
+      }
+    ]
+  }
+}

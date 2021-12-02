@@ -1,0 +1,90 @@
+{
+  "name": "core-applet",
+  "version": "1.0.0",
+  "description": "## 主架构 uniapp",
+  "main": "main.js",
+  "dependencies": {
+    "moment": "^2.29.1",
+    "uview": "^0.1.0"
+  },
+  "devDependencies": {
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "babel-eslint": "^10.1.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^7.17.0",
+    "husky": "^7.0.2",
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2",
+    "stylelint": "^13.13.1",
+    "stylelint-config-prettier": "^8.0.2",
+    "stylelint-config-standard": "^22.0.0",
+    "stylelint-order": "^4.1.0"
+  },
+  "uni-app": {
+    "scripts": {
+      "weixin-dev": {
+        "title": "微信小程序-开发环境",
+        "env": {
+          "UNI_PLATFORM": "mp-weixin",
+          "BASE_API_URL": {
+            "BASE_API": "http://192.168.26.158:8887"
+          }
+        },
+        "define": {
+          "MP-DINGTALK": true
+        }
+      },
+      "weixin-test": {
+        "title": "微信小程序-测试环境",
+        "env": {
+          "UNI_PLATFORM": "mp-weixin",
+          "BASE_API_URL": {
+            "BASE_API": "https://wm.91ikanjia.com"
+          }
+        },
+        "define": {
+          "MP-DINGTALK": true
+        }
+      },
+      "weixin-pro": {
+        "title": "微信小程序-正式环境",
+        "env": {
+          "UNI_PLATFORM": "mp-weixin",
+          "BASE_API_URL": {
+            "BASE_API": "https://api.drstrong.cn",
+            "WEB_VIEW_URL": "https://patienttest.drstrong.cn",
+            "IM_APPKEY": "1113210915083491#health"
+          }
+        },
+        "define": {
+          "MP-DINGTALK": true
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint:eslint": "eslint --fix --ext \"**/*.{vue,less,css,scss}\"",
+    "lint:prettier": "prettier --write --loglevel warn \"**/*.{js,json,tsx,css,less,scss,vue,html,md}\"",
+    "lint:stylelint": "stylelint --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/",
+    "gc": "git add -A && git-cz && git pull && git push"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@codehub-cn-east-2.devcloud.huaweicloud.com:hhjk_jiangjun00001/fed-miniapp-patient.git"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
