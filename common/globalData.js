@@ -15,9 +15,9 @@ const globalData = {
       },
     })
   },
-  //退出登录\im退出登录
+  //退出登录
   logOut() { },
-  //获取用户信息 isLogin判断是否跳转首页 userId环信登录id
+  //获取用户信息 
   async getUserInfo() { },
 }
 export { globalData }

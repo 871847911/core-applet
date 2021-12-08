@@ -131,6 +131,35 @@
   ],
   "subPackages": [
     {
+      "root": "pages/account",
+      "pages": [
+        {
+          "path": "auth/login/login",
+          "style": {
+            "navigationBarTitleText": "登录",
+            "navigationStyle": "custom",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "auth/register/register",
+          "style": {
+            "navigationBarTitleText": "注册",
+            "navigationStyle": "custom",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "auth/forget/forget",
+          "style": {
+            "navigationBarTitleText": "忘记密码",
+            "navigationStyle": "custom",
+            "enablePullDownRefresh": false
+          }
+        }
+      ]
+    },
+    {
       "root": "pages/order",
       "pages": [
         {
