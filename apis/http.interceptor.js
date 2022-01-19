@@ -12,13 +12,7 @@ const install = (Vue, vm) => {
     showLoading: false,
     originalData: true,
     header: {
-      'Content-Type': 'application/json;charset=UTF-8',
-      _p: '2', //平台
-      _o: '2', //应用来源
-      _n: '0', //是否原生
-      _v: '1.0.0', //版本号
-      _nv: '1.0.0', //版本号
-      _c: 2, //平台类型 1 APP 2 微信小程序 3 微信公众号(桐庐) 4 微信公众号(海南)
+      'Content-Type': 'application/json;charset=UTF-8'
     },
   })
 
@@ -26,11 +20,10 @@ const install = (Vue, vm) => {
   Vue.prototype.$u.http.interceptor.request = (config) => {
     //动态设置token 应对部分接口不需要token的情况
     const token = uni.getStorageSync('TOKEN')
-    if (config.needToken) config.header.token = token
+    if (config.needToken) config.header.Authorization = 'Bearer ' + token
     //动态设置 Content-Type
     config.header = {
       ...config.header,
-      _m: getApp() && getApp().globalData.systemInfo.model, //设备型号
       'Content-Type': ContentType[config.ContentType],
     }
     return config
@@ -44,7 +37,7 @@ const install = (Vue, vm) => {
     // 返回成功
     if (res.statusCode == 200) {
       const result = res.data
-      if (result.code == 0) {
+      if (result.code == 200) {
         return result.result || result.data
       } else if (result.code == 1) {
         const token = uni.getStorageSync('TOKEN')

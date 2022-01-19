@@ -23,7 +23,7 @@
             placeholder-class="placeholder"
             class="qui-input"
             type="text"
-            value=""
+            v-model="user"
             placeholder="请输入账号"
           />
         </view>
@@ -37,10 +37,10 @@
         <view class="flex-1">
           <input
             placeholder-class="placeholder"
-            :password="password"
+            :password="true"
             class="qui-input"
             type="text"
-            value=""
+            v-model="password"
             placeholder="请输入密码"
           />
         </view>
@@ -59,7 +59,7 @@
             placeholder-class="placeholder"
             class="qui-input"
             type="text"
-            value=""
+            v-model="user"
             placeholder="请输入手机号"
           />
         </view>
@@ -73,7 +73,7 @@
         <view class="flex-1">
           <input
             placeholder-class="placeholder"
-            :password="password"
+            :password="true"
             class="qui-input"
             type="text"
             value=""
@@ -86,7 +86,7 @@
       </view>
     </view>
     <view class="btns">
-      <view class="qbtn">
+      <view class="qbtn" @click="login">
         <text class="btn-text-color fs30">登录</text>
       </view>
       <view class="flex ptb30 mlr20 space-between">
@@ -105,11 +105,41 @@
   export default {
     data() {
       return {
-        password: true,
+        user: '',
+        password: '',
         tabIndex: 0,
       }
     },
     methods: {
+      onKeyInput(event) {
+        this.user = event.target.value
+      },
+      onKeyInput(event) {
+        this.password = event.target.value
+      },
+      login() {
+        if (!this.user) return uni.showToast({ title: '账号不能为空', icon: 'none' })
+        if (!this.password) return uni.showToast({ title: '密码不能为空', icon: 'none' })
+        uni.showLoading({ title: '正在登录', mask: true })
+        uni.login({
+          success: (res) => {
+            if (res.code) {
+              let params = {
+                account: this.user,
+                appId: 'wx29117971d55461fc',
+                code: res.code,
+                password: this.password,
+              }
+              console.log(params)
+              this.$api.login.login(params, 'json', false).then((res) => {
+                uni.hideLoading()
+                uni.setStorageSync('TOKEN', res)
+                uni.switchTab({ url: '/pages/index/index' })
+              })
+            }
+          },
+        })
+      },
       tab(index) {
         this.tabIndex = index
       },

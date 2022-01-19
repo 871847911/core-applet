@@ -22,7 +22,7 @@
     {
       "path": "pages/homestay/homestay",
       "style": {
-        "navigationBarTitleText": "民宿优选",
+        "navigationBarTitleText": "店铺管理",
         "navigationBarBackgroundColor": "#fff"
       }
     },
@@ -47,7 +47,7 @@
     {
       "path": "pages/homestay/search/search",
       "style": {
-        "navigationBarTitleText": "搜索页面",
+        "navigationBarTitleText": "搜索",
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor": "#fff"
       }

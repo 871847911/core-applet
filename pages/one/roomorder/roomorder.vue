@@ -524,9 +524,21 @@
         betweenStart: '',
         betweenEnd: '',
         calendarShow: false,
+        roomDetail: {},
       }
     },
+    onLoad() {
+      this.getRoomDetail()
+    },
     methods: {
+      getRoomDetail() {
+        this.$api.home
+          .bnbInfo()
+          .then((res) => {
+            this.roomDetail = res
+          })
+          .catch((res = {}) => {})
+      },
       confirm(e) {
         console.log(e)
       },

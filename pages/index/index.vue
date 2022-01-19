@@ -15,7 +15,7 @@
     <view class="content">
       <!-- 轮播 -->
       <view class="swiper">
-        <u-swiper :list="list" height="360"></u-swiper>
+        <u-swiper :list="bannerList" height="360"></u-swiper>
       </view>
 
       <view class="content-list">
@@ -52,22 +52,24 @@
       </view>
 
       <!-- 民宿限购 -->
-      <view class="content-quota">
+      <view v-if="seckill" class="content-quota">
         <view class="content-quota-top">
-          <view class="content-quota-left"> 预约抢购 <text>00:00:00</text> </view>
+          <view class="content-quota-left"> 预约抢购 <text>{{}}</text> </view>
           <view class="content-quota-right" @tap="gopurchase()">
             查看全部 <u-icon name="arrow-right" color="#fff"></u-icon>
           </view>
         </view>
         <view class="content-quota-bottom" @click="gospecial">
           <view class="content-quota-bottom-img">
-            <image src="../../static/images/位图.png" mode=""></image>
+            <image :src="seckill.picSite" mode=""></image>
           </view>
           <view class="content-quota-bottom-title">
             <view class="content-quota-bottom-left">
-              2晚特惠 遇染民宿酒店，2晚连住低至7折，送正餐下午茶
+              {{ seckill.mtitle + seckill.vtitle }}
             </view>
-            <view class="content-quota-bottom-right"> ￥<text>398</text> </view>
+            <view class="content-quota-bottom-right">
+              ￥<text>{{ seckill.price }}</text>
+            </view>
           </view>
         </view>
       </view>
@@ -80,21 +82,27 @@
           </view>
         </view>
         <view class="hot-scenery">
-          <view class="hot-scenery-list" v-for="item in 3">
-            <view class="hot-scenery-img">
-              <image src="../../static/images/位图.png" mode=""></image>
+          <block v-for="(item, index) in hotCityList" :key="item.id">
+            <view v-if="index < 3" class="hot-scenery-list">
+              <view class="hot-scenery-img">
+                <image src="../../static/images/位图.png" mode=""></image>
+              </view>
+              <view class="hot-scenery-city"> {{ item.city }} </view>
+              <view class="hot-scenery-area"> 西湖风景区 </view>
             </view>
-            <view class="hot-scenery-city"> 杭州 </view>
-            <view class="hot-scenery-area"> 西湖风景区 </view>
-          </view>
+          </block>
         </view>
         <view class="hot-list">
-          <view class="hot-list-one" v-for="item in 6"> 千岛湖 </view>
+          <block v-for="(item, index) in hotCityList" :key="item.id">
+            <view v-if="index > 3" class="hot-list-one">
+              <text>{{ item.city }}</text>
+            </view>
+          </block>
         </view>
       </view>
 
       <!-- 热门商品 -->
-      <view class="content-recommend">
+      <!-- <view class="content-recommend">
         <view class="hot-title">
           <view class="hot-title-left"> 热门商品 </view>
           <view class="hot-title-right">
@@ -120,7 +128,7 @@
             <view class="fen"> <u-icon name="map" color="#fff"></u-icon> 浙江省 杭州市 </view>
           </view>
         </view>
-      </view>
+      </view> -->
 
       <!-- 热门房源 -->
       <view class="content-recommend">
@@ -131,22 +139,29 @@
           </view>
         </view>
         <view class="content-recommend-two">
-          <view class="content-recommend-two-first" v-for="item in 4" @click="gocomment()">
+          <view
+            class="content-recommend-two-first"
+            v-for="item in packList"
+            :key="item.id"
+            @click="gocomment()"
+          >
             <view class="content-recommend-two-one">
               <image src="../../static/images/位图(1).png" mode=""></image>
             </view>
             <view class="content-recommend-two-two">
-              已消毒步行西湖10多分钟 近浙大 黄龙 植物…
+              {{ item.description }}
             </view>
             <view class="content-recommend-two-three">
-              <view class="text1"> 398 </view>
+              <view class="text1"> {{ item.price }} </view>
               <view class=""> </view>
               <view class="text2">
-                原价￥888
+                原价￥{{ item.defaultPrice }}
                 <view class="line"> </view>
               </view>
             </view>
-            <view class="fen"> <u-icon name="map" color="#fff"></u-icon> 浙江省 杭州市 </view>
+            <view class="fen">
+              <u-icon name="map" color="#fff"></u-icon>{{ item.province + item.city }}</view
+            >
           </view>
         </view>
       </view>
@@ -171,7 +186,10 @@
         num: 0,
         btnShow: false,
         shareShow: true,
-        list: [
+        seckill: null,
+        hotCityList: [],
+        packList: [],
+        bannerList: [
           {
             image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
             title: '昨夜星辰昨夜风，画楼西畔桂堂东',
@@ -192,7 +210,7 @@
       // this.getNavCate()
     },
     onShow() {
-      this.getNavCate(), this.one()
+      this.getNavCate()
     },
     methods: {
       // 去往搜索页面
@@ -271,30 +289,29 @@
       choseshare() {
         this.shareShow = false
       },
-      async getNavCate() {
-        console.log(123)
-        let data = {
-          id: '3',
-        }
-        let res = await this.$api.login.requestGetcate(data)
-        console.log(res)
-        // if (res.data.code === 200) {
-        // 	let list = res.data.list || [];
-        // 	this.navCate = this.navCate.concat(list);
-        // }
-      },
-      async one() {
-        console.log(123)
-        let data = {
-          id: '3',
-          aa: '2',
-        }
-        let res = await this.$api.login.one(data)
-        console.log(res)
-        // if (res.data.code === 200) {
-        // 	let list = res.data.list || [];
-        // 	this.navCate = this.navCate.concat(list);
-        // }
+      getNavCate() {
+        uni.showLoading({ title: '加载中...', mask: true })
+        this.$api.home
+          .mainPageList()
+          .then((res) => {
+            uni.hideLoading()
+            const {
+              activityList = [],
+              bannerList = [],
+              hotCityList = [],
+              packList = [],
+            } = res || {}
+            this.bannerList = bannerList.map((c) => {
+              c.title = ''
+              c.image = c.site
+            })
+            this.hotCityList = hotCityList
+            this.packList = packList
+            this.seckill = activityList[0] || null
+          })
+          .catch((res) => {
+            uni.hideLoading()
+          })
       },
     },
   }

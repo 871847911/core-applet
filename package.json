@@ -29,7 +29,7 @@
         "env": {
           "UNI_PLATFORM": "mp-weixin",
           "BASE_API_URL": {
-            "BASE_API": "http://192.168.26.158:8887"
+            "BASE_API": "https://8ba3-115-197-164-32.ngrok.io"
           }
         },
         "define": {
@@ -41,7 +41,7 @@
         "env": {
           "UNI_PLATFORM": "mp-weixin",
           "BASE_API_URL": {
-            "BASE_API": "https://wm.91ikanjia.com"
+            "BASE_API": "http://www.ebbbe.com:82"
           }
         },
         "define": {
