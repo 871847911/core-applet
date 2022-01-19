@@ -25,12 +25,6 @@
           </view>
           <view class="content-list-title"> 房源套餐 </view>
         </view>
-        <view class="content-list-one" @click="goone()">
-          <view class="content-list-top">
-            <image src="../../static/images/旅客评价.png" mode=""></image>
-          </view>
-          <view class="content-list-title"> 商品采购 </view>
-        </view>
         <view class="content-list-one" @tap="gogroup()">
           <view class="content-list-top">
             <image src="../../static/images/联系我们.png" mode=""></image>
@@ -42,12 +36,6 @@
             <image src="../../static/images/我的订单.png" mode=""></image>
           </view>
           <view class="content-list-title"> 家庭·亲子 </view>
-        </view>
-        <view class="content-list-one">
-          <view class="content-list-top">
-            <image src="../../static/images/我的订单.png" mode=""></image>
-          </view>
-          <view class="content-list-title"> 大宗采购 </view>
         </view>
       </view>
 

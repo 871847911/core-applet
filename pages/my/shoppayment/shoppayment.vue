@@ -10,7 +10,7 @@
 					<view class="editmap-one-left">
 						<image src="../../../static/images/编组@2x(1).png" mode=""></image>
 						<text>王铁柱</text>
-						<text>155****4544</text>
+						<text>184****8220</text>
 					</view>
 					<view class="editmap-one-right">
 						修改<image src="../../../static/images/编组@2x.png" mode=""></image>

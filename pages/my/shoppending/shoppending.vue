@@ -30,7 +30,7 @@
 						<view class="editmap-one-left">
 							<image src="../../../static/images/编组@2x(1).png" mode=""></image>
 							<text>王二狗</text>
-							<text>155****7745</text>
+							<text>184****8220</text>
 						</view>
 						
 						

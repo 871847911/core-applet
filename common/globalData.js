@@ -16,8 +16,28 @@ const globalData = {
     })
   },
   //退出登录
-  logOut() { },
+  logOut(params = {}) {
+    const { showToast = true, toastText = '已成功退出登录' } = params
+    uni.removeStorageSync('USERINFO') //清除用户信息
+    uni.removeStorageSync('VUEX_DATA') //清除VUEX 缓存数据
+    uni.removeStorageSync('TOKEN') //清除token
+    vm.$u.vuex('IS_LOGIN', false) //修改登录状态
+    vm.$u.vuex('USERINFO', {})
+    if (showToast) uni.showToast({ title: toastText, icon: 'none', mask: true })
+    setTimeout(() => {
+      uni.redirectTo({
+        url: '/pages/account/auth/login/login',
+      })
+    }, 1000)
+  },
   //获取用户信息 
-  async getUserInfo() { },
+  async getUserInfo() {
+    vm.$api.login.getLoginUser().then((res) => {
+      vm.$u.vuex('IS_LOGIN', true)
+      uni.setStorageSync('USERINFO', res)
+      vm.$u.vuex('USERINFO', res)
+    })
+
+  },
 }
 export { globalData }

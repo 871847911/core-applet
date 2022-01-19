@@ -15,8 +15,14 @@
     {
       "path": "pages/orders/orders",
       "style": {
-        "navigationBarTitleText": "订单管理",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "订单管理"
+      }
+    },
+    {
+      "path": "pages/news/news",
+      "style": {
+        "navigationBarTitleText": "消息",
+        "navigationBarBackgroundColor": "#fff"
       }
     },
     {
@@ -31,8 +37,8 @@
       "style": {
         "navigationBarTitleText": "我的",
         "enablePullDownRefresh": false,
-        "navigationStyle": "custom",
-        "navigationBarTextStyle": "white"
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#00bbcc"
       }
     },
     {
@@ -125,6 +131,13 @@
       "path": "pages/shop/confirmorder/confirmorder",
       "style": {
         "navigationBarTitleText": "确认订单",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/news/systemnews/systemnews",
+      "style": {
+        "navigationBarTitleText": "系统消息",
         "enablePullDownRefresh": false
       }
     }
@@ -308,9 +321,23 @@
       "name": "my",
       "pages": [
         {
+          "path": "addmoney/addmoney",
+          "style": {
+            "navigationBarTitleText": "追加保证金",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "tuikuan/tuikuan",
+          "style": {
+            "navigationBarTitleText": "保证金退款",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
           "path": "remaining/remaining",
           "style": {
-            "navigationBarTitleText": "余额",
+            "navigationBarTitleText": "明细",
             "enablePullDownRefresh": false
           }
         },
@@ -425,13 +452,6 @@
           "path": "news/news",
           "style": {
             "navigationBarTitleText": "消息",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "systemnews/systemnews",
-          "style": {
-            "navigationBarTitleText": "系统消息",
             "enablePullDownRefresh": false
           }
         },
@@ -593,7 +613,7 @@
         {
           "path": "remain/remain",
           "style": {
-            "navigationBarTitleText": "余额",
+            "navigationBarTitleText": "我的钱包",
             "enablePullDownRefresh": false
           }
         },
@@ -653,13 +673,7 @@
         "text": "订单管理"
       },
       {
-        "pagePath": "pages/homestay/homestay",
-        "iconPath": "static/tabbar/B&B.png",
-        "selectedIconPath": "static/tabbar/B&B-selected.png",
-        "text": "民宿优选"
-      },
-      {
-        "pagePath": "pages/shop/shop",
+        "pagePath": "pages/news/news",
         "iconPath": "static/tabbar/shop.png",
         "selectedIconPath": "static/tabbar/shop-selected.png",
         "text": "消息"

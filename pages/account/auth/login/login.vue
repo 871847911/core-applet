@@ -133,7 +133,9 @@
               console.log(params)
               this.$api.login.login(params, 'json', false).then((res) => {
                 uni.hideLoading()
+                this.$u.vuex('IS_LOGIN', true)
                 uni.setStorageSync('TOKEN', res)
+                getApp().globalData.getUserInfo()
                 uni.switchTab({ url: '/pages/index/index' })
               })
             }

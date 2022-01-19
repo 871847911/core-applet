@@ -16,3 +16,9 @@ export function getSearch(params, ContentType) {
 export function bnbInfo(params, ContentType) {
   return vm.$u.get(`${BASE_API}/bnbcore/mainPage/bnbInfo`, params, ContentType)
 }
+
+//充值
+export function rechargeAdd(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/recharge/add`, params, ContentType)
+}
+
