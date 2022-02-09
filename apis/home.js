@@ -19,6 +19,12 @@ export function bnbInfo(params, ContentType) {
 
 //充值
 export function rechargeAdd(params, ContentType) {
-  return vm.$u.get(`${BASE_API}/recharge/add`, params, ContentType)
+  return vm.$u.post(`${BASE_API}/recharge/add`, params, ContentType)
 }
+
+//保证金充值记录
+export function rechargePage(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/recharge/page`, params, ContentType)
+}
+
 

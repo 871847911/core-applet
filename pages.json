@@ -449,13 +449,6 @@
           }
         },
         {
-          "path": "news/news",
-          "style": {
-            "navigationBarTitleText": "消息",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
           "path": "logistics/logistics",
           "style": {
             "navigationBarTitleText": "物流消息",
