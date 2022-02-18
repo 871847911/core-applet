@@ -3,10 +3,8 @@
     <view class="time">
       <view class="time-one" v-for="(item, index) in dateList" @click="btn(index)" :key="index">
         <view class="time-top" :class="{ active: index == num }">{{ item.title }}</view>
-        <view class="time-bottom" v-if="index != 0" :class="{ actives: index == num }">{{
-          item.date
-        }}</view>
-        <u-count-down
+        <view class="time-bottom" :class="{ actives: index == num }">{{ item.date }}</view>
+        <!-- <u-count-down
           :separator-color="index == num ? '#ff2d19' : ''"
           :color="index == num ? '#ff2d19' : ''"
           class="countDown"
@@ -15,73 +13,96 @@
           :show-days="false"
           v-else
           :timestamp="timestamp"
-        ></u-count-down>
+        ></u-count-down> -->
       </view>
     </view>
     <view class="tap">
       <sl-filter :ref="'slFilter'" :menuList="menuList" @result="result"></sl-filter>
     </view>
-    <view class="content">
-      <view class="card" v-for="item in 4">
+    <view v-if="dataList.length > 0" class="content">
+      <view class="card" v-for="item in dataList" :key="item.packId">
         <view class="card-img" @click="gospecial()">
-          <image src="../../../static/images/house.png" mode=""></image>
+          <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
         </view>
         <view class="card-right">
-          <view class="card-right-one"> 似水中餐厅｜4588元奢华8~10… </view>
-          <view class="card-right-two"> 已抢2345份 </view>
+          <view class="card-right-one">{{ item.mainTitle }}</view>
+          <view class="card-right-two"> 已抢{{ item.sellAmt }}份 </view>
           <view class="card-right-three">
             <view class="card-right-three-left">
-              <text class="text1">88</text> <text class="text2"></text>
+              <image src="/static/icon.png"></image>
+              <text class="text1">{{ item.price }}</text> <text class="text2"></text>
             </view>
             <view class="card-right-three-right"> 立即抢购 </view>
           </view>
         </view>
       </view>
     </view>
+    <mescroll-empty v-else :option="emptyOption"></mescroll-empty>
   </view>
 </template>
 
 <script>
   import slFilter from '@/components/sl-filter/sl-filter.vue'
   import moment from 'moment'
+  import config from '@/common/config.js'
+  const { BASE_API } = config
   export default {
     components: {
       slFilter,
     },
     data() {
       return {
+        BASE_API: BASE_API,
+        sortType: '',
         num: 0,
         timestamp: 0,
+        emptyOption: {
+          tip: '暂无活动', // 提示
+          btnText: '',
+          icon: '/static/empty/empty.png',
+        },
         menuList: [
           {
             title: '综合排序',
             detailTitle: '子标题3',
-            key: 'key_3',
+            key: 'sortType',
             isSort: true,
             isMutiple: false,
             detailList: [
               {
                 title: '综合排序',
-                value: '1',
+                value: '',
               },
               {
-                title: '距离',
-                value: '2',
+                title: '价格',
+                value: 'PRICE',
               },
               {
                 title: '销量',
-                value: '2',
+                value: 'SALE',
               },
             ],
           },
         ],
         dateList: [],
+        dataList: [],
       }
     },
     onLoad() {
       this.getDateList()
     },
     methods: {
+      getList(data) {
+        console.log(data)
+        this.$api.home
+          .activities({
+            activeDt: moment().format('YYYY') + '/' + data.date,
+            sortType: this.sortType,
+          })
+          .then((res = {}) => {
+            this.dataList = res.activityList || []
+          })
+      },
       getDateList() {
         let list = []
         const start = moment().format('x')
@@ -104,9 +125,12 @@
           list.push(data)
         }
         this.dateList = list
+        this.getList(list[0])
       },
       result(e) {
         console.log(e)
+        this.sortType = e.sortType
+        this.getList(this.dateList[this.num])
       },
       gospecial() {
         uni.navigateTo({
@@ -114,8 +138,8 @@
         })
       },
       btn(index) {
-        console.log(index)
         this.num = index
+        this.getList(this.dateList[index])
       },
     },
   }
@@ -188,6 +212,7 @@
         }
       }
       .card-right {
+        width: 100%;
         display: flex;
         flex-direction: column;
         // justify-content: space-between;
@@ -210,6 +235,13 @@
             color: #ff2d19;
             font-size: 24rpx;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            image {
+              width: 42rpx;
+              height: 42rpx;
+              margin-right: 8rpx;
+            }
             .text1 {
               font-size: 34rpx;
             }

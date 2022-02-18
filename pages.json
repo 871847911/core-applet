@@ -28,7 +28,7 @@
     {
       "path": "pages/homestay/homestay",
       "style": {
-        "navigationBarTitleText": "店铺管理",
+        "navigationBarTitleText": "民宿信息",
         "navigationBarBackgroundColor": "#fff"
       }
     },
@@ -285,8 +285,7 @@
           "path": "roomorder/roomorder",
           "style": {
             "navigationBarTitleText": "房间预约",
-            "enablePullDownRefresh": false,
-            "navigationStyle": "custom"
+            "enablePullDownRefresh": false
           }
         },
 
@@ -301,7 +300,7 @@
         {
           "path": "scenicspotdetails/scenicspotdetails",
           "style": {
-            "navigationBarTitleText": "景点介绍",
+            "navigationBarTitleText": "民宿介绍",
             "enablePullDownRefresh": false,
             "navigationBarBackgroundColor": "#fff"
           }

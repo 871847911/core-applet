@@ -43,15 +43,21 @@
         <view class="list-order-left">
           <view class="list-order-one">+{{ item.amount }}</view>
           <view class="list-order-two">时间：{{ item.createTime }}</view>
-          <view v-if="item.status == 3" class="list-order-two">原因：{{ item.createTime }}</view>
+          <view v-if="item.status == 3" class="list-order-two"
+            >原因：{{ item.approvalRemark }}</view
+          >
         </view>
-        <view class="list-order-right" @click="goedit" v-if="item.status == 2">
+        <view
+          class="list-order-right"
+          @click="goedit(item.amount, item.id)"
+          v-if="item.status == 2"
+        >
           <view class="tuikuan">申请退款</view>
         </view>
-        <view class="list-order-right" v-if="item.status == 1">
+        <view class="list-order-right padding" v-if="item.status == 1">
           <view class="tuikuan">审核中</view>
         </view>
-        <view class="list-order-right red" @click="goedit" v-if="item.status == 3">
+        <view class="list-order-right red" v-if="item.status == 3">
           <view class="tuikuan">被拒绝</view>
         </view>
       </view>
@@ -83,10 +89,10 @@
         USERINFO: (state) => state.USERINFO, //用户信息
       }),
     },
-    onLoad() {
+    onShow() {
       let params = {
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 1000,
         account: '',
         rechargeUser: this.USERINFO.id,
       }
@@ -108,14 +114,18 @@
           status: 1,
         }
         this.$api.home.rechargeAdd(params).then((res) => {
-          uni.showToast({ title: '已提交充值申请' })
+          uni.showToast({ title: '您的申请已提交成功，请您耐心等待平台的审核。' })
+          setTimeout(() => {
+            uni.navigateBack()
+          }, 1500)
         })
       },
       //上传成功
       onSuccess(data, index, lists) {
         //页面上定义的临时存放图片的对象，提示也保存后台返回的图片名称
+        console.log(data)
         let currentFile = ''
-        currentFile = data.data[0]
+        currentFile = data.data
         //成功上传一个图片就往fileList里面添加一个图片对象
         this.fileList.push(currentFile)
       },
@@ -140,9 +150,9 @@
         }
       },
       // 编辑地址
-      goedit() {
+      goedit(money, rechargeRecordId) {
         uni.navigateTo({
-          url: '../tuikuan/tuikuan',
+          url: `../tuikuan/tuikuan?money=${money}&rechargeRecordId=${rechargeRecordId}`,
         })
       },
     },
@@ -288,6 +298,11 @@
     .red {
       .tuikuan {
         background: red;
+      }
+    }
+    .padding {
+      .tuikuan {
+        background: rgb(255, 145, 0);
       }
     }
   }

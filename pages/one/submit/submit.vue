@@ -129,13 +129,27 @@
       goresults() {
         uni.showModal({
           title: '您确定要支付吗',
-          success: function (res) {
+          success: (res) => {
             if (res.confirm) {
-              console.log('用户点击确定')
-              uni.navigateTo({
-                //跳转页面
-                url: '../resultssuccess/resultssuccess',
-              })
+              let params = {
+                address: '千岛湖',
+                checkinAddress: '千岛湖',
+                checkinName: '求玮',
+                checkinPhone: '18405818220',
+                orderAmount: '222',
+                phone: '18405818220',
+                planDt: '2022/02/25',
+                productId: 2,
+              }
+              this.$api.home
+                .checkinOrder(params)
+                .then((res) => {
+                  // uni.navigateTo({
+                  //   //跳转页面
+                  //   url: '../resultssuccess/resultssuccess',
+                  // })
+                })
+                .catch((res = {}) => {})
             } else if (res.cancel) {
               console.log('用户点击取消')
               uni.navigateTo({

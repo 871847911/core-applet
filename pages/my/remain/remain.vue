@@ -38,25 +38,26 @@
             <view @click="gotrade()">明细 </view>
           </view>
         </view>
-        <view class="list-order">
+        <view class="list-order" @click="goAddGold">
           <view class="list-order-left">
-            <view class="list-order-one">金米粒</view>
+            <view class="list-order-one">补充金米粒</view>
           </view>
           <view class="list-order-right"
-            >不足100，尽快前往补足<image src="@/static/images/全部.png" mode=""></image
+            >{{ dataSourse.gold < 100 ? '不足100，尽快前往补足' : ''
+            }}<image src="@/static/images/全部.png" mode=""></image
           ></view>
         </view>
-        <view class="list-order">
+        <!-- <view class="list-order">
           <view class="list-order-left">
             <view class="list-order-one">房费</view>
           </view>
           <view class="list-order-right"
             ><image src="@/static/images/全部.png" mode=""></image
           ></view>
-        </view>
+        </view> -->
         <view class="list-order" @click="goAddMoney">
           <view class="list-order-left">
-            <view class="list-order-one">保证金</view>
+            <view class="list-order-one">追加保证金</view>
           </view>
           <view class="list-order-right"
             ><image src="@/static/images/全部.png" mode=""></image
@@ -81,6 +82,22 @@
       goAddMoney() {
         uni.navigateTo({
           url: '../addmoney/addmoney',
+        })
+      },
+      goAddGold() {
+        uni.showModal({
+          title: '提示',
+          content: '是否一键补足金米粒',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            //第二次提示后，强制更新
+            if (res.confirm) {
+              this.$api.home.makeRoomRate().then((res) => {
+                uni.showToast({ title: '操作成功～' })
+                this.getMoney()
+              })
+            }
+          },
         })
       },
       getMoney() {
@@ -209,7 +226,7 @@
   }
 
   .list {
-    padding: 20rpx;
+    padding: 20rpx 20rpx 0 20rpx;
     background-color: #fff;
     border-radius: 10rpx;
     margin-top: 20rpx;

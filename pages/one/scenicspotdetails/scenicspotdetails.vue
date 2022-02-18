@@ -1,55 +1,54 @@
 <template>
-	<view class="warp">
-		<view class="content" v-for="item in 2">
-			<view class="content-img">
-				<image src="../../../static/images/位图.png" mode=""></image>
-			</view>
-			<view class="content-details">
-				西湖，位于浙江省杭州市西部，是中国主要的观赏性淡水湖泊，
-				也是中国首批国家重点风景名胜区。西湖三面环山，面积约6.39平方千米，
-				东西宽约2.8千米，南北长约3.2千米，绕湖一周近15千米。湖中被孤山、
-				白堤、苏堤、杨公堤分隔，按面积大小分别为外西湖、西里湖、北里湖、
-				小南湖及岳湖等五片水面，苏堤、白堤越过湖面，小瀛洲、湖心亭、阮公墩三个人工小岛鼎立于外西湖湖心，
-				夕照山的雷峰塔与宝石山的保俶塔隔湖相映，由此形成了“一山、二塔、
-				三岛、三堤、五湖”的基本格局。2011年6月24日，杭州西湖列入世界遗产名录。
-			</view>
-		</view>
-	</view>
+  <view class="warp">
+    <view>民宿名称：{{ roomDetail.name }}</view>
+    <view>电话：{{ roomDetail.tel }}</view>
+    <view>地区：{{ roomDetail.province }}{{ roomDetail.city }}{{ roomDetail.district }}</view>
+    <view>详细地址{{ roomDetail.address }}</view>
+  </view>
 </template>
-
 <script>
-	export default {
-		data() {
-			return {
-				
-			}
-		},
-		methods: {
-			
-		}
-	}
+  export default {
+    data() {
+      return {
+        roomDetail: {},
+      }
+    },
+    onLoad() {
+      this.getRoomDetail()
+    },
+    methods: {
+      getRoomDetail() {
+        this.$api.home
+          .bnbInfo({ bnbId: 2 })
+          .then((res) => {
+            this.roomDetail = res.bnbInfo
+          })
+          .catch((res = {}) => {})
+      },
+    },
+  }
 </script>
 
 <style scoped lang="scss">
-	.warp{
-		padding: 20rpx 32rpx;
-		background-color: #f5f5f5;
-	}
-	.content{
-		.content-img{
-			width: 686rpx;
-			height: 280rpx;
-			image{
-				width: 686rpx;
-				height: 280rpx;
-			}
-		}
-		.content-details{
-			font-size: 28rpx;
-			color: #333;
-			font-family: PingFangSC-Regular, PingFang SC;
-			letter-spacing: 1rpx;
-			margin: 20rpx 0;
-		}
-	}
+  .warp {
+    padding: 20rpx 32rpx;
+    background-color: #f5f5f5;
+  }
+  .content {
+    .content-img {
+      width: 686rpx;
+      height: 280rpx;
+      image {
+        width: 686rpx;
+        height: 280rpx;
+      }
+    }
+    .content-details {
+      font-size: 28rpx;
+      color: #333;
+      font-family: PingFangSC-Regular, PingFang SC;
+      letter-spacing: 1rpx;
+      margin: 20rpx 0;
+    }
+  }
 </style>

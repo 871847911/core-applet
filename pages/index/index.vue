@@ -19,7 +19,7 @@
       </view>
 
       <view class="content-list">
-        <view class="content-list-one">
+        <view class="content-list-one" @tap="gogroup()">
           <view class="content-list-top">
             <image src="../../static/images/酒店位置.png" mode=""></image>
           </view>
@@ -27,13 +27,13 @@
         </view>
         <view class="content-list-one" @tap="gogroup()">
           <view class="content-list-top">
-            <image src="../../static/images/联系我们.png" mode=""></image>
+            <image src="../../static/images/旅客评价@2x.png" mode=""></image>
           </view>
           <view class="content-list-title"> 活动·团建 </view>
         </view>
-        <view class="content-list-one" @tap="goparenting()">
+        <view class="content-list-one" @tap="gogroup()">
           <view class="content-list-top">
-            <image src="../../static/images/我的订单.png" mode=""></image>
+            <image src="../../static/images/联系我们@2x.png" mode=""></image>
           </view>
           <view class="content-list-title"> 家庭·亲子 </view>
         </view>
@@ -49,14 +49,17 @@
         </view>
         <view class="content-quota-bottom" @click="gospecial">
           <view class="content-quota-bottom-img">
-            <image :src="seckill.picSite" mode=""></image>
+            <image :src="`${BASE_API}/sysFileInfo/preview?id=${seckill.picSite}`" mode=""></image>
           </view>
           <view class="content-quota-bottom-title">
             <view class="content-quota-bottom-left">
-              {{ seckill.mtitle + seckill.vtitle }}
+              {{ seckill.mainTitle + seckill.viceTitle }}
             </view>
             <view class="content-quota-bottom-right">
-              ￥<text>{{ seckill.price }}</text>
+              <image src="../../static/icon.png"></image>
+              <text>
+                {{ seckill.price }}
+              </text>
             </view>
           </view>
         </view>
@@ -73,20 +76,20 @@
           <block v-for="(item, index) in hotCityList" :key="item.id">
             <view v-if="index < 3" class="hot-scenery-list">
               <view class="hot-scenery-img">
-                <image src="../../static/images/位图.png" mode=""></image>
+                <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.site}`" mode=""></image>
               </view>
               <view class="hot-scenery-city"> {{ item.city }} </view>
-              <view class="hot-scenery-area"> 西湖风景区 </view>
+              <!-- <view class="hot-scenery-area"> 西湖风景区 </view> -->
             </view>
           </block>
         </view>
-        <view class="hot-list">
+        <!-- <view class="hot-list">
           <block v-for="(item, index) in hotCityList" :key="item.id">
             <view v-if="index > 3" class="hot-list-one">
               <text>{{ item.city }}</text>
             </view>
           </block>
-        </view>
+        </view> -->
       </view>
 
       <!-- 热门商品 -->
@@ -122,7 +125,7 @@
       <view class="content-recommend">
         <view class="hot-title">
           <view class="hot-title-left"> 热门房源 </view>
-          <view class="hot-title-right">
+          <view class="hot-title-right" @click="gohothouse">
             全部 <u-icon name="arrow-right" color="#999" size="22"></u-icon>
           </view>
         </view>
@@ -134,21 +137,25 @@
             @click="gocomment()"
           >
             <view class="content-recommend-two-one">
-              <image src="../../static/images/位图(1).png" mode=""></image>
+              <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
             </view>
             <view class="content-recommend-two-two">
-              {{ item.description }}
+              {{ item.mainTitle }}{{ item.viceTitle }}
             </view>
             <view class="content-recommend-two-three">
-              <view class="text1"> {{ item.price }} </view>
+              <view class="text1">
+                <image src="../../static/icon.png"></image>
+                <text>{{ item.defaultPrice }}</text>
+              </view>
               <view class=""> </view>
-              <view class="text2">
+              <!-- <view class="text2">
                 原价￥{{ item.defaultPrice }}
                 <view class="line"> </view>
-              </view>
+              </view> -->
             </view>
             <view class="fen">
-              <u-icon name="map" color="#fff"></u-icon>{{ item.province + item.city }}</view
+              <u-icon name="map" color="#fff"></u-icon
+              >{{ item.province + item.city + item.district || '' }}</view
             >
           </view>
         </view>
@@ -165,32 +172,22 @@
 
 <script>
   import share from '@/components/share'
+  import config from '@/common/config.js'
+  const { BASE_API } = config
   export default {
     components: {
       share,
     },
     data() {
       return {
+        BASE_API: BASE_API,
         num: 0,
         btnShow: false,
         shareShow: true,
         seckill: null,
         hotCityList: [],
         packList: [],
-        bannerList: [
-          {
-            image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-            title: '昨夜星辰昨夜风，画楼西畔桂堂东',
-          },
-          {
-            image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-            title: '身无彩凤双飞翼，心有灵犀一点通',
-          },
-          {
-            image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-            title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳',
-          },
-        ],
+        bannerList: [],
       }
     },
 
@@ -199,8 +196,18 @@
     },
     onShow() {
       this.getNavCate()
+      // this.getBannerList()
     },
     methods: {
+      getBannerList() {
+        this.$api.home.bannerList().then((res) => {
+          uni.hideLoading()
+          this.bannerList = res.rows.map((c) => {
+            c.title = c.packId
+            c.image = BASE_API + '/sysFileInfo/preview?id=' + c.imgId
+          })
+        })
+      },
       // 去往搜索页面
       gosearch() {
         uni.navigateTo({
@@ -279,27 +286,29 @@
       },
       getNavCate() {
         uni.showLoading({ title: '加载中...', mask: true })
-        this.$api.home
-          .mainPageList()
-          .then((res) => {
-            uni.hideLoading()
-            const {
-              activityList = [],
-              bannerList = [],
-              hotCityList = [],
-              packList = [],
-            } = res || {}
-            this.bannerList = bannerList.map((c) => {
-              c.title = ''
-              c.image = c.site
+        this.$api.home.mainPageList().then((res) => {
+          uni.hideLoading()
+          const {
+            activityList = [],
+            bannerList = [],
+            hotCityList = [],
+            hotPackList = [],
+            packList = [],
+          } = res || {}
+          let list = []
+          bannerList.map((c) => {
+            list.push({
+              title: c.packId,
+              image: BASE_API + '/sysFileInfo/preview?id=' + c.site,
             })
-            this.hotCityList = hotCityList
-            this.packList = packList
-            this.seckill = activityList[0] || null
           })
-          .catch((res) => {
-            uni.hideLoading()
-          })
+          console.log(list)
+          this.bannerList = list
+          this.hotCityList = hotCityList
+          this.packList = hotPackList
+          this.seckill = activityList[0] || null
+          // this.seckill = packList[0] || null
+        })
       },
     },
   }
@@ -335,7 +344,7 @@
     .hot {
       padding: 20rpx;
       background-color: #fff;
-      height: 470rpx;
+      // height: 470rpx;
       .hot-title {
         display: flex;
         justify-content: space-between;
@@ -492,6 +501,13 @@
           .content-quota-bottom-right {
             font-size: 24rpx;
             color: #ff2d19;
+            display: flex;
+            align-items: center;
+            image {
+              width: 42rpx;
+              height: 42rpx;
+              margin-right: 8rpx;
+            }
             text {
               font-size: 36rpx;
               font-weight: 700;
@@ -545,6 +561,13 @@
             color: #333;
             margin: 20rpx 0 10rpx;
             padding: 0 15rpx;
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
           }
           .content-recommend-two-three {
             padding: 0 20rpx;
@@ -554,6 +577,13 @@
               font-size: 32rpx;
               font-weight: 700;
               color: #ff2d19;
+              display: flex;
+              align-items: center;
+              image {
+                width: 42rpx;
+                height: 42rpx;
+                margin-right: 8rpx;
+              }
             }
             .text2 {
               font-size: 20rpx;

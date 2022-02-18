@@ -91,7 +91,7 @@
           <view class="shop-title-top"> 笑意民宿 </view>
           <view class="shop-title-bottom"> 中国传统文化传承民宿 </view>
         </view>
-        <view class="shop-btn"> 进入店铺 </view>
+        <view class="shop-btn" @click="goDetail"> 进入店铺 </view>
       </view>
       <!-- 介绍 -->
       <view class="introduce">
@@ -531,9 +531,14 @@
       this.getRoomDetail()
     },
     methods: {
+      goDetail() {
+        uni.navigateTo({
+          url: '../../homestay/homestay',
+        })
+      },
       getRoomDetail() {
         this.$api.home
-          .bnbInfo()
+          .packDetail({ packId: 2 })
           .then((res) => {
             this.roomDetail = res
           })

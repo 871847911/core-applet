@@ -16,7 +16,7 @@
         <view class="login" v-else>
           <view class="card-one">
             <view class="card-img">
-              <image :src="USERINFO.avatar || '../../static/images/header.png'" mode=""></image>
+              <image :src="'../../static/images/user.jpeg'" mode=""></image>
             </view>
             <view class="card-title">
               <view class="card-title-one">
@@ -43,7 +43,7 @@
             </view>
             <view class="card-two-one" @tap="goremaining()">
               <view class="card-two-two">
-                <image src="../../static/images/编组备份@2x(2).png" mode=""></image>
+                <image src="../../static/images/qianbao.png" mode=""></image>
               </view>
               <view class="card-two-three"> 我的钱包 </view>
             </view>
@@ -55,25 +55,25 @@
           <view class="order-list">
             <view class="order-list-one">
               <view class="order-list-one-top">
-                <image src="../../static/images/编组备份@2x(2).png" mode=""></image>
+                <u-icon name="calendar" size="48"></u-icon>
               </view>
               <view class="order-list-one-bottom"> 我的预约 </view>
             </view>
             <view class="order-list-one" @tap="gocoupon()">
               <view class="order-list-one-top">
-                <image src="../../static/images/编组备份@2x(2).png" mode=""></image>
+                <u-icon name="red-packet" size="48"></u-icon>
               </view>
               <view class="order-list-one-bottom"> 囤货/屯卷 </view>
             </view>
             <view class="order-list-one" @click="gomyorder()">
               <view class="order-list-one-top">
-                <image src="../../static/images/编组备份@2x(2).png" mode=""></image>
+                <u-icon name="home" size="48"></u-icon>
               </view>
               <view class="order-list-one-bottom"> 我的民宿 </view>
             </view>
             <view class="order-list-one" @click="gomyorder()">
               <view class="order-list-one-top">
-                <image src="../../static/images/编组备份@2x(2).png" mode=""></image>
+                <u-icon name="order" size="48"></u-icon>
               </view>
               <view class="order-list-one-bottom"> 全部订单 </view>
             </view>
