@@ -20,19 +20,41 @@
       <sl-filter :ref="'slFilter'" :menuList="menuList" @result="result"></sl-filter>
     </view>
     <view v-if="dataList.length > 0" class="content">
-      <view class="card" v-for="item in dataList" :key="item.packId">
-        <view class="card-img" @click="gospecial()">
+      <view
+        class="card"
+        v-for="item in dataList"
+        :key="item.packId"
+        @click="gospecial(item.packId)"
+      >
+        <view class="card-img">
           <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
         </view>
         <view class="card-right">
           <view class="card-right-one">{{ item.mainTitle }}</view>
-          <view class="card-right-two"> 已抢{{ item.sellAmt }}份 </view>
+          <view v-if="item.status === 0" class="card-right-two yuyue">
+            已预约{{ item.sellAmt }}份
+          </view>
+          <view v-else class="card-right-two"> 已抢{{ item.sellAmt }}份 </view>
+
           <view class="card-right-three">
             <view class="card-right-three-left">
               <image src="/static/icon.png"></image>
               <text class="text1">{{ item.price }}</text> <text class="text2"></text>
             </view>
-            <view class="card-right-three-right"> 立即抢购 </view>
+            <view
+              v-if="item.status === 0"
+              class="card-right-three-right yuyue"
+              @click.stop="goyuyue"
+            >
+              预约
+            </view>
+            <view v-else-if="item.status === 1" class="card-right-three-right" @click.stop="toPay">
+              立即抢购
+            </view>
+            <view v-else-if="item.status === 2" class="card-right-three-right disable"> 售罄 </view>
+            <view v-else-if="item.status === 4" class="card-right-three-right disable">
+              已结束
+            </view>
           </view>
         </view>
       </view>
@@ -57,7 +79,7 @@
         num: 0,
         timestamp: 0,
         emptyOption: {
-          tip: '暂无活动', // 提示
+          tip: '敬请期待', // 提示
           btnText: '',
           icon: '/static/empty/empty.png',
         },
@@ -92,6 +114,24 @@
       this.getDateList()
     },
     methods: {
+      toPay() {
+        uni.navigateTo({
+          url: '../yuyue/yuyue',
+        })
+      },
+      goyuyue() {
+        uni.showModal({
+          title: '提示',
+          confirmColor: '#00bbcc',
+          content: '是否花费20金米粒预约？',
+          success: function (res) {
+            if (res.confirm) {
+              uni.showToast({ title: '预约成功～' })
+            } else if (res.cancel) {
+            }
+          },
+        })
+      },
       getList(data) {
         console.log(data)
         this.$api.home
@@ -227,6 +267,9 @@
           color: #999;
           margin: 10rpx 0 50rpx;
         }
+        .yuyue {
+          color: #00bbcc;
+        }
 
         .card-right-three {
           display: flex;
@@ -260,6 +303,13 @@
             line-height: 56rpx;
             color: #fff;
             text-align: center;
+          }
+          .disable {
+            color: #999999;
+            background: #e6e6e6;
+          }
+          .yuyue {
+            background: linear-gradient(270deg, #3dcccc 0%, #00bbcc 100%);
           }
         }
       }

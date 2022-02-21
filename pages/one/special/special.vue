@@ -29,12 +29,12 @@
 
         <view class="address-time">
           <view class="address-time-left"> 在线预约不可退 </view>
-          <view class="address-time-right"> 可入住至2021-06-30 </view>
+          <!-- <view class="address-time-right"> 可入住至2021-06-30 </view> -->
         </view>
       </view>
 
       <!-- 可订日期 -->
-      <view class="date">
+      <!-- <view class="date">
         <view class="date-title" v-for="item in 3">
           <view class="date-one"> 3-17 </view>
           <view class="date-two"> 周三 </view>
@@ -43,18 +43,18 @@
         <view class="date-title-one">
           <view class="date-title-one-top"> 查看更多 可订日期 </view>
         </view>
-      </view>
+      </view> -->
 
       <view class="address-map">
-        <view class="address-map-three">
+        <!-- <view class="address-map-three">
           <view class="map-three-one"> 5.0评分 </view>
           <view class="" style="font-weight: 700; color: #00bbcc"> “设施齐全 附近地铁” </view>
           <view class="map-three-two" @click="gocomment"> 241条评论 > </view>
-        </view>
-        <view class="address-map-one">
+        </view> -->
+        <!-- <view class="address-map-one">
           <text>西湖湖滨商圈</text>
           <text>平海路38号</text>
-        </view>
+        </view> -->
         <view class="address-map-two">
           <view class="map-one">
             <image src="../../../static/images/距离@2x.png" mode=""></image>
@@ -443,13 +443,13 @@
         </view>
         <view class="footer-one-title"> 客服 </view>
       </view>
-      <view class="footer-one" @click="shareShow = true">
+      <!-- <view class="footer-one" @click="shareShow = true">
         <view class="footer-one-img3">
           <image src="../../../static/images/转发.png" mode=""></image>
         </view>
         <view class="footer-one-title"> 收藏 </view>
-      </view>
-      <view class="footer-two"> 立即抢购 </view>
+      </view> -->
+      <view class="footer-two" @click.stop="toPay"> 立即抢购 </view>
     </view>
     <!-- 分享弹窗 -->
     <u-popup v-model="shareShow" mode="bottom" height="300" :closeable="true">
@@ -494,6 +494,11 @@
       }
     },
     methods: {
+      toPay() {
+        uni.navigateTo({
+          url: '../yuyue/yuyue',
+        })
+      },
       btn(index) {
         if (index == 0) {
           this.num = 0
@@ -1150,12 +1155,11 @@
     }
   }
   .footer {
-    height: 100rpx;
+    padding: 20rpx 32rpx 68rpx 32rpx;
     width: 750rpx;
     background-color: #fff;
     display: flex;
     justify-content: space-between;
-    padding: 0 32rpx;
     align-items: center;
     position: fixed;
     bottom: 0;
@@ -1191,7 +1195,7 @@
     }
 
     .footer-two {
-      width: 550rpx;
+      width: 600rpx;
       height: 80rpx;
       background: linear-gradient(270deg, #ff8833 0%, #ff6619 100%);
       border-radius: 39rpx;

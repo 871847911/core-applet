@@ -6,21 +6,32 @@
         shape="square"
         :show-action="fasle"
         v-model="keyword"
+        :search="search"
       ></u-search>
     </view>
     <view class="content">
       <view class="content-recommend-two">
-        <view class="content-recommend-two-first" v-for="item in 6" @click="gocomment()">
+        <view
+          class="content-recommend-two-first"
+          v-for="item in list"
+          :key="item.id"
+          @click="gocomment(item.id)"
+        >
           <view class="content-recommend-two-one">
-            <image src="../../../static/images/位图(1).png" mode=""></image>
+            <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
           </view>
-          <view class="content-recommend-two-two"> 已消毒步行西湖10多分钟 近浙大 黄龙 植物… </view>
+          <view class="content-recommend-two-two"> {{ item.mainTitle }}{{ item.viceTitle }} </view>
           <view class="content-recommend-two-three">
-            <view class="text1"> 398 </view>
+            <view class="text1">
+              <image src="/static/icon.png"></image>
+              <text>{{ item.defaultPrice }}</text>
+            </view>
             <view class=""> </view>
-            <view class="text2"> </view>
           </view>
-          <view class="fen"> <u-icon name="map" color="#fff"></u-icon> 浙江省 杭州市 </view>
+          <view class="fen">
+            <u-icon name="map" color="#fff"></u-icon
+            >{{ item.province + item.city + item.district || '' }}</view
+          >
         </view>
       </view>
     </view>
@@ -28,15 +39,34 @@
 </template>
 
 <script>
+  import config from '@/common/config.js'
+  const { BASE_API } = config
   export default {
     data() {
-      return {}
+      return {
+        BASE_API: BASE_API,
+        list: [],
+      }
+    },
+    onLoad(option = {}) {
+      uni.setNavigationBarTitle({
+        title: option.type === '1' ? '房源套餐' : option.type === '2' ? '活动·团建' : '家庭·亲子',
+      })
+      this.getList('')
     },
     methods: {
+      search() {
+        this.getList(this.keyword)
+      },
+      getList(val) {
+        this.$api.home.queryPack({ word: val }).then((res) => {
+          this.list = res
+        })
+      },
       // 房源详情
-      gocomment() {
+      gocomment(id) {
         uni.navigateTo({
-          url: '../../one/roomorder/roomorder',
+          url: `../../one/roomorder/roomorder?id=${id}`,
         })
       },
     },
@@ -89,6 +119,13 @@
             font-size: 32rpx;
             font-weight: 700;
             color: #ff2d19;
+            display: flex;
+            align-items: center;
+            image {
+              width: 42rpx;
+              height: 42rpx;
+              margin-right: 8rpx;
+            }
           }
           .text2 {
             font-size: 20rpx;

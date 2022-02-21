@@ -19,19 +19,19 @@
       </view>
 
       <view class="content-list">
-        <view class="content-list-one" @tap="gogroup()">
+        <view class="content-list-one" @tap="gogroup(1)">
           <view class="content-list-top">
             <image src="../../static/images/酒店位置.png" mode=""></image>
           </view>
           <view class="content-list-title"> 房源套餐 </view>
         </view>
-        <view class="content-list-one" @tap="gogroup()">
+        <view class="content-list-one" @tap="gogroup(2)">
           <view class="content-list-top">
             <image src="../../static/images/旅客评价@2x.png" mode=""></image>
           </view>
           <view class="content-list-title"> 活动·团建 </view>
         </view>
-        <view class="content-list-one" @tap="gogroup()">
+        <view class="content-list-one" @tap="gogroup(3)">
           <view class="content-list-top">
             <image src="../../static/images/联系我们@2x.png" mode=""></image>
           </view>
@@ -39,7 +39,7 @@
         </view>
       </view>
 
-      <!-- 民宿限购 -->
+      <!-- 民宿抢购 -->
       <view v-if="seckill" class="content-quota">
         <view class="content-quota-top">
           <view class="content-quota-left"> 预约抢购 <text>{{}}</text> </view>
@@ -134,7 +134,7 @@
             class="content-recommend-two-first"
             v-for="item in packList"
             :key="item.id"
-            @click="gocomment()"
+            @click="gocomment(item.id)"
           >
             <view class="content-recommend-two-one">
               <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
@@ -221,9 +221,9 @@
         })
       },
       // 去往团建民宿
-      gogroup() {
+      gogroup(type) {
         uni.navigateTo({
-          url: '../homestay/group/group',
+          url: `../homestay/group/group?type=${type}`,
         })
       },
       // 去往亲子页面
@@ -233,9 +233,9 @@
         })
       },
       // 房源详情
-      gocomment() {
+      gocomment(id) {
         uni.navigateTo({
-          url: '../one/roomorder/roomorder',
+          url: `../one/roomorder/roomorder?id=${id}`,
         })
       },
 
@@ -269,16 +269,16 @@
           url: '../one/hothouse/hothouse',
         })
       },
-      // 跳转民宿限购列表
+      // 跳转民宿抢购列表
       gopurchase() {
         uni.navigateTo({
           url: '../one/purchase/purchase',
         })
       },
-      // 跳转限购商品详情
+      // 跳转抢购商品详情
       gospecial() {
         uni.navigateTo({
-          url: '../special/special',
+          url: '../one/special/special',
         })
       },
       choseshare() {

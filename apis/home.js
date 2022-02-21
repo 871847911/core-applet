@@ -37,6 +37,12 @@ export function packDetail(params, ContentType) {
   return vm.$u.get(`${BASE_API}/mainPage/packDetail`, params, ContentType)
 }
 
+//套餐list
+export function queryPack(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/mainPage/queryPack`, params, ContentType)
+}
+
+
 //下单
 export function checkinOrder(params, ContentType) {
   return vm.$u.get(`${BASE_API}/mainPage/checkin_order`, params, ContentType)

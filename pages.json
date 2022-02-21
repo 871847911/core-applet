@@ -173,18 +173,6 @@
       ]
     },
     {
-      "root": "pages/order",
-      "pages": [
-        {
-          "path": "order/order",
-          "style": {
-            "navigationBarTitleText": "民宿限购",
-            "enablePullDownRefresh": false
-          }
-        }
-      ]
-    },
-    {
       "root": "pages/one",
       "pages": [
         {
@@ -198,7 +186,7 @@
         {
           "path": "purchase/purchase",
           "style": {
-            "navigationBarTitleText": "民宿限购",
+            "navigationBarTitleText": "民宿抢购",
             "enablePullDownRefresh": false
           }
         },
@@ -244,7 +232,7 @@
         {
           "path": "yuyue/yuyue",
           "style": {
-            "navigationBarTitleText": "预约",
+            "navigationBarTitleText": "抢购",
             "enablePullDownRefresh": false,
             "navigationBarBackgroundColor": "#fff"
           }

@@ -2,7 +2,6 @@
   <view class="warp">
     <view class="vr">
       <image src="../../../static/images/图片.png" mode="heightFix"></image>
-
       <view class="vr-vr">
         <view class="vr-btn3" @click="gopicture"> 1/8 </view>
       </view>
@@ -12,7 +11,9 @@
       <!-- 地址 -->
       <view class="address">
         <view class="address-money">
-          <view class="address-money-left"> ￥<text>1688</text> </view>
+          <view class="address-money-left">
+            <image src="/static/icon.png"></image><text>{{ roomDetail.defaultPrice }}</text>
+          </view>
           <view class="" style="width: 32rpx; height: 32rpx">
             <image
               style="width: 32rpx; height: 32rpx"
@@ -22,14 +23,12 @@
             <view class="" style="font-size: 16rpx; color: #333"> 收藏 </view>
           </view>
         </view>
-        <view class="address-title">
-          2晚特惠 遇染民宿酒店，2晚连住低至7折，送正餐下午茶、欢迎水果、绿色农家菜园采摘。
-        </view>
-        <view class="address-title-one"> 2天1晚住宿+早餐+下午茶+年货伴手礼+限定款红包+夜宵 </view>
+        <view class="address-title">{{ roomDetail.mainTitle }}{{ roomDetail.viceTitle }}</view>
+        <view class="address-title-one">{{ roomDetail.description }}</view>
 
         <view class="address-time">
           <view class="address-time-left"> 在线预约不可退 </view>
-          <view class="address-time-right"> 可入住至2021-06-30 </view>
+          <!-- <view class="address-time-right"> 可入住至2021-06-30 </view> -->
         </view>
       </view>
 
@@ -44,22 +43,44 @@
           <view class="date-title-one-top"> 查看更多 可订日期 </view>
         </view>
       </view>
+      <view class="contentz">
+        <view class="content-title">
+          <view class="content-title-left">
+            <view class="content-title-one"> </view>
+            <view class="content-title-two"> 遇染民宿酒店 </view>
+          </view>
+        </view>
+
+        <view class="content-list">
+          <view
+            class="content-list-one"
+            v-for="(item, index) in 5"
+            :class="{ activez: index == num }"
+            @click="bind(index)"
+          >
+            红藕深 · 观景大床房
+          </view>
+        </view>
+      </view>
       <!-- <uni-calendar ref="calendar" :insert="false" :range="true" @confirm="confirm" /> -->
       <view class="address-map">
-        <view class="address-map-three">
+        <!-- <view class="address-map-three">
           <view class="map-three-one"> 5.0评分 </view>
           <view class="" style="font-weight: 700; color: #00bbcc"> “设施齐全 附近地铁” </view>
           <view class="map-three-two" @click="gocomment"> 241条评论 > </view>
-        </view>
-        <view class="address-map-one">
+        </view> -->
+        <!-- <view class="address-map-one">
           <text>西湖湖滨商圈</text>
           <text>平海路38号</text>
-        </view>
+        </view> -->
         <view class="address-map-two">
           <view class="map-one">
             <image src="../../../static/images/距离@2x.png" mode=""></image>
           </view>
-          <view class="map-two"> 距离杭州体育馆3.4公里，驾车至此4.9公里，约17分钟 </view>
+          <view class="map-two"
+            >{{ roomDetail.province }}{{ roomDetail.city }}{{ roomDetail.description
+            }}{{ roomDetail.address }}</view
+          >
           <view class="map-four"> </view>
           <view class="map-three" @click="phoneShow = true">
             <image src="../../../static/images/位置@2x.png" mode=""></image>
@@ -91,7 +112,7 @@
           <view class="shop-title-top"> 笑意民宿 </view>
           <view class="shop-title-bottom"> 中国传统文化传承民宿 </view>
         </view>
-        <view class="shop-btn" @click="goDetail"> 进入店铺 </view>
+        <view class="shop-btn" @click="goDetail"> 进入民宿 </view>
       </view>
       <!-- 介绍 -->
       <view class="introduce">
@@ -443,14 +464,14 @@
         </view>
         <view class="footer-one-title"> 客服 </view>
       </view>
-      <view class="footer-one" @click="shareShow = true">
+      <!-- <view class="footer-one" @click="shareShow = true">
         <view class="footer-one-img3">
           <image src="../../../static/images/转发.png" mode=""></image>
         </view>
         <view class="footer-one-title"> 收藏 </view>
-      </view>
-      <view class="footer-two"> 加入我店 </view>
-      <view class="footer-two" @tap="goyuyue()"> 预约 </view>
+      </view> -->
+      <!-- <view class="footer-two"> 加入我店 </view> -->
+      <view class="footer-two" @tap="gosubmit()"> 立即预订 </view>
       <view class="footer-three"> 屯卷 </view>
     </view>
     <!-- 分享弹窗 -->
@@ -527,8 +548,8 @@
         roomDetail: {},
       }
     },
-    onLoad() {
-      this.getRoomDetail()
+    onLoad(option = {}) {
+      this.getRoomDetail(option.id)
     },
     methods: {
       goDetail() {
@@ -536,11 +557,11 @@
           url: '../../homestay/homestay',
         })
       },
-      getRoomDetail() {
+      getRoomDetail(id) {
         this.$api.home
-          .packDetail({ packId: 2 })
-          .then((res) => {
-            this.roomDetail = res
+          .packDetail({ packId: id })
+          .then((res = {}) => {
+            this.roomDetail = res.packDetail
           })
           .catch((res = {}) => {})
       },
@@ -608,11 +629,21 @@
           url: '../yuyue/yuyue',
         })
       },
+      gosubmit() {
+        uni.navigateTo({
+          url: '../submit/submit',
+        })
+      },
     },
   }
 </script>
 
 <style scoped lang="scss">
+  .activez {
+    background: rgba(0, 187, 204, 0.1) !important;
+    border: 2rpx solid #00bbcc;
+    color: #00bbcc !important;
+  }
   .calendar {
     .calendar-header {
       text-align: center;
@@ -675,7 +706,52 @@
       }
     }
   }
+  .contentz {
+    padding: 20rpx;
+    width: 686rpx;
+    background-color: #fff;
+    margin: 20rpx 0;
+    .content-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20rpx;
+      .content-title-left {
+        display: flex;
+        align-items: center;
+        .content-title-one {
+          width: 12rpx;
+          height: 12rpx;
+          background: #00bbcc;
+          border-radius: 2rpx;
+          margin-right: 20rpx;
+        }
+        .content-title-two {
+          font-size: 32rpx;
+          color: #333;
+        }
+      }
+      .content-title-right {
+        font-size: 26rpx;
+        color: #999;
+      }
+    }
 
+    .content-list {
+      .content-list-one {
+        // padding: 10rpx 40rpx;
+        width: 338rpx;
+        height: 60rpx;
+        text-align: center;
+        line-height: 60rpx;
+        font-size: 28rpx;
+        margin-bottom: 20rpx;
+        border-radius: 30rpx;
+        background: #f5f5f5;
+        color: #666;
+      }
+    }
+  }
   .content {
     padding: 0 32rpx;
     margin-top: 20rpx;
@@ -758,6 +834,13 @@
         .address-money-left {
           color: #ff2d19;
           font-size: 24rpx;
+          display: flex;
+          align-items: center;
+          image {
+            width: 42rpx;
+            height: 42rpx;
+            margin-right: 8rpx;
+          }
           text {
             font-size: 40rpx;
           }
@@ -867,7 +950,18 @@
         }
       }
     }
-
+    .content-list-one {
+      // padding: 10rpx 40rpx;
+      width: 338rpx;
+      height: 60rpx;
+      text-align: center;
+      line-height: 60rpx;
+      font-size: 28rpx;
+      margin-bottom: 20rpx;
+      border-radius: 30rpx;
+      background: #f5f5f5;
+      color: #666;
+    }
     .date {
       width: 686rpx;
       height: 192rpx;
@@ -877,6 +971,7 @@
       border-radius: 10rpx;
       display: flex;
       justify-content: space-between;
+
       .date-title {
         width: 148rpx;
         height: 152rpx;
@@ -1213,12 +1308,11 @@
     }
   }
   .footer {
-    height: 100rpx;
     width: 750rpx;
     background-color: #fff;
     display: flex;
     justify-content: space-between;
-    padding: 0 32rpx;
+    padding: 20rpx 32rpx 68rpx 32rpx;
     align-items: center;
     position: fixed;
     bottom: 0;
@@ -1254,7 +1348,7 @@
     }
 
     .footer-two {
-      width: 170rpx;
+      width: 270rpx;
       height: 80rpx;
       border-radius: 39rpx;
       border: 2rpx solid #ff7919;
@@ -1264,7 +1358,7 @@
       line-height: 80rpx;
     }
     .footer-three {
-      width: 170rpx;
+      width: 270rpx;
       height: 80rpx;
       background: linear-gradient(90deg, #ff2d19 0%, #ff6619 100%);
       border-radius: 39rpx;
