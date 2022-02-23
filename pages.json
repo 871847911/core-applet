@@ -95,7 +95,6 @@
       "style": {
         "navigationBarTitleText": "地区",
         "enablePullDownRefresh": false,
-        "navigationStyle": "custom", // 隐藏系统导航栏
         "navigationBarBackgroundColor": "#fff"
       }
     },

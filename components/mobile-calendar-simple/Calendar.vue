@@ -52,9 +52,15 @@
 </template>
 
 <script>
-  import moment from 'moment'
   export default {
     props: {
+      datePriceList: {
+        //是否显示
+        type: [Array],
+        default() {
+          return []
+        },
+      },
       isShow: {
         //是否显示
         type: [Boolean],
@@ -133,7 +139,6 @@
         betweenEnds: '',
         calendar: [],
         weekList: ['日', '一', '二', '三', '四', '五', '六'],
-        datePriceList: [], //未来几天的价格list
       }
     },
     watch: {
@@ -170,20 +175,6 @@
       },
     },
     methods: {
-      //计算未来几天价格
-      getDatePrice(day) {
-        this.datePriceList = []
-        for (var i = 0; i < 10; i++) {
-          let data = {
-            date: moment(day)
-              .subtract(0 - i, 'days')
-              .format('YYYY/MM/DD'),
-            price: '¥688',
-          }
-          this.datePriceList.push(data)
-        }
-        console.log(this.datePriceList)
-      },
       init() {
         var date = new Date()
         this.year = date.getFullYear()
@@ -197,7 +188,8 @@
           this.startDates = this.resetTime(year + '/' + month + '/' + day)
           this.startYear = year
           this.startMonth = month
-          this.getDatePrice(this.startDates)
+          // this.getDatePrice(this.startDates)
+          this.$emit('getDatePrice', this.startDates)
         } else {
           this.startDates = this.resetTime(this.startDate)
           var dd = this.startDate.replace(/-/g, '/').split('/')
@@ -473,7 +465,8 @@
         const choose = {
           startStr: this.dateFormat(this.startDates),
         }
-        this.getDatePrice(this.startDates)
+        this.$emit('getDatePrice', this.startDates)
+        // this.getDatePrice(this.startDates)
         if (this.mode == 1) {
           this.$emit('callback', choose)
         } else if (this.mode == 2 && this.startDates && this.endDates) {

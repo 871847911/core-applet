@@ -172,9 +172,9 @@
         this.sortType = e.sortType
         this.getList(this.dateList[this.num])
       },
-      gospecial() {
+      gospecial(id) {
         uni.navigateTo({
-          url: '../special/special',
+          url: `../special/special?id=${id}`,
         })
       },
       btn(index) {

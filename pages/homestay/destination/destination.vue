@@ -12,7 +12,7 @@
       <view class="one">
         <view class="content-one"> 热门目的地 </view>
         <view class="content-two">
-          <view class="content-two-one" v-for="item in list" :key="item.id">
+          <view class="content-two-one" v-for="item in list" :key="item.id" @click="goregion(item)">
             <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picId}`" mode=""></image>
             <view class="content-two-title"> {{ item.city }} </view>
             <!-- <view class="content-two-title1"> 西湖风景区 </view> -->
@@ -56,9 +56,9 @@
           this.list = res.rows || []
         })
       },
-      goregion() {
+      goregion(item) {
         uni.navigateTo({
-          url: '../region/region',
+          url: `../region/region?id=${item.id}&name=${item.city}`,
         })
       },
     },

@@ -41,17 +41,25 @@ export function packDetail(params, ContentType) {
 export function queryPack(params, ContentType) {
   return vm.$u.get(`${BASE_API}/mainPage/queryPack`, params, ContentType)
 }
+//设备list
+export function facilities(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/facilities/page`, params, ContentType)
+}
 
+
+//优惠券下单
+export function mainPageOrder(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/mainPage/order`, params, ContentType)
+}
 
 //下单
 export function checkinOrder(params, ContentType) {
   return vm.$u.get(`${BASE_API}/mainPage/checkin_order`, params, ContentType)
 }
-
-
-
-
-
+//获取套餐分类
+export function packCategoryPage(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/packCategory/page`, params, ContentType)
+}
 
 //充值
 export function rechargeAdd(params, ContentType) {

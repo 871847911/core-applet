@@ -10,7 +10,7 @@
       ></u-search>
     </view>
     <view class="content">
-      <view class="content-recommend-two">
+      <view v-if="list.length > 0" class="content-recommend-two">
         <view
           class="content-recommend-two-first"
           v-for="item in list"
@@ -18,7 +18,7 @@
           @click="gocomment(item.id)"
         >
           <view class="content-recommend-two-one">
-            <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
+            <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picId}`" mode=""></image>
           </view>
           <view class="content-recommend-two-two"> {{ item.mainTitle }}{{ item.viceTitle }} </view>
           <view class="content-recommend-two-three">
@@ -34,6 +34,7 @@
           >
         </view>
       </view>
+      <mescroll-empty v-else :option="emptyOption"></mescroll-empty>
     </view>
   </view>
 </template>
@@ -46,20 +47,28 @@
       return {
         BASE_API: BASE_API,
         list: [],
+        category: '',
+        keyword: '',
+        emptyOption: {
+          tip: '暂无数据', // 提示
+          btnText: '',
+          icon: '/static/empty/empty.png',
+        },
       }
     },
     onLoad(option = {}) {
       uni.setNavigationBarTitle({
-        title: option.type === '1' ? '房源套餐' : option.type === '2' ? '活动·团建' : '家庭·亲子',
+        title: option.name || '房源套餐',
       })
-      this.getList('')
+      this.category = option.id
+      this.getList(option.id)
     },
     methods: {
       search() {
-        this.getList(this.keyword)
+        this.getList()
       },
       getList(val) {
-        this.$api.home.queryPack({ word: val }).then((res) => {
+        this.$api.home.queryPack({ word: this.keyword, category: this.category }).then((res) => {
           this.list = res
         })
       },

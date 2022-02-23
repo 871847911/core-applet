@@ -4,11 +4,13 @@
       <view class="content">
         <view class="card">
           <view class="card-left">
-            <image src="../../../static/images/house.png" mode=""></image>
+            <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
           </view>
           <view class="card-right">
-            <view class="card-right-one"> 遇染民宿酒店（杭州湖滨店） </view>
-            <view class="card-right-two"> 温馨家庭房 </view>
+            <view class="card-right-one">
+              {{ roomDetail.mainTitle }}{{ roomDetail.viceTitle }}
+            </view>
+            <view class="card-right-two"> {{ packRoomList[fx].roomName }} </view>
             <view class="card-right-three">
               <text>03/18入住</text>
               <text>至</text>
@@ -16,7 +18,8 @@
               <text>1晚</text>
             </view>
             <view class="card-right-four">
-              <text>398</text>
+              <image src="/static/icon.png"></image>
+              <text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text>
             </view>
           </view>
         </view>
@@ -24,7 +27,7 @@
         <view class="num">
           <view class="num-left"> 房间数量 </view>
           <view class="num-right">
-            <u-number-box v-model="value" @change="valChange"></u-number-box>
+            <u-number-box v-model="num" :min="1" :max="roomDetail.defaultStock"></u-number-box>
           </view>
         </view>
 
@@ -32,48 +35,75 @@
           <view class="information-title"> 入住信息 </view>
           <view class="information-one">
             <view class="information-one-left"> 入住人 </view>
-            <u-input placeholder="请填写实际入住人姓名" v-model="form.name" />
+            <u-input style="flex: 1" placeholder="请填写实际入住人姓名" v-model="form.name" />
           </view>
           <view class="information-one">
             <view class="information-one-left"> 手机号 </view>
-            <u-input placeholder="用于接受通知，请填写真实号码" v-model="form.intro" />
+            <u-input
+              style="flex: 1"
+              placeholder="用于接受通知，请填写真实号码"
+              v-model="form.intro"
+            />
           </view>
           <view class="information-one">
             <view class="information-one-left"> 预计到店 </view>
-            <u-input value="8:00" />
-            <u-icon
-              name="arrow-right"
-              style="margin-left: 160rpx"
-              @click="timeShow = true"
-            ></u-icon>
+            <u-input style="flex: 1" v-model="adTime" />
           </view>
           <view class="information-one">
             <view class="information-one-left"> 备注 </view>
-            <u-input placeholder="选填，请先与客服协调一致" v-model="form.sex" />
+            <u-input style="flex: 1" placeholder="选填，请先与客服协调一致" v-model="form.sex" />
           </view>
         </view>
-
+        <u-popup v-model="phoneShow" mode="bottom" height="400">
+          <view class="information">
+            <view class="information-two">
+              <view class=""> 在线支付 </view>
+              <view class="flex_a"
+                ><image src="/static/icon.png"></image
+                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+              >
+            </view>
+            <view class="information-two">
+              <view class=""> 原价 </view>
+              <view class="flex_a"
+                ><image src="/static/icon.png"></image
+                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+              >
+            </view>
+            <view class="information-two">
+              <view class=""> 预约金米粒抵扣 </view>
+              <view class="flex_a"
+                ><image src="/static/icon.png"></image
+                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+              >
+            </view>
+            <view class="information-two">
+              <view class=""> 膨胀金抵扣 </view>
+              <view class="flex_a"
+                ><image src="/static/icon.png"></image
+                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+              >
+            </view>
+          </view>
+        </u-popup>
         <!-- 发票 -->
         <view class="invoice">
           <view class="invoice-left"> 发票 </view>
           <view class="invoice-right"> 发票请到酒店前台索取，可提供普票 </view>
         </view>
-
         <!-- 支付方式 -->
         <view class="mode">
           <view class="mode-title"> 支付方式 </view>
-          <view class="mode-one">
-            <view class="mode-one-left"> 金米粒支付 </view>
-            <view class="mode-one-right">
-              <image src="../../../static/tabbar/my-selected.png" mode=""></image>
-            </view>
-          </view>
-          <view class="mode-one">
-            <view class=""> 房券抵扣 </view>
-            <view class="mode-one-right">
-              <image src="../../../static/tabbar/my-selected.png" mode=""></image>
-            </view>
-          </view>
+          <u-radio-group active-color="#ff7919" v-model="payType" @change="radioGroupChange">
+            <u-radio
+              @change="radioChange"
+              v-for="(item, index) in payTypelist"
+              :key="index"
+              :name="item.name"
+            >
+              {{ item.name }}
+            </u-radio>
+          </u-radio-group>
         </view>
         <!-- 下单说明 -->
         <view class="explain">
@@ -88,10 +118,12 @@
         </view>
       </view>
       <!-- 选择到店时间 -->
-      <u-picker v-model="timeShow" title="当天预计到店时间" :list="list"></u-picker>
       <view class="footer">
-        <view class="footer-left"> <text>398</text>.00 </view>
-        <view class="footer-one">
+        <view class="footer-left"
+          ><image src="/static/icon.png"></image
+          ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+        >
+        <view class="footer-one" @click="phoneShow = true">
           明细<image src="../../../static/images/立即抢购@2x.png" mode=""></image>
         </view>
         <view class="footer-right" @tap="goresults()"> 提交订单 </view>
@@ -101,10 +133,25 @@
 </template>
 
 <script>
+  import config from '@/common/config.js'
+  const { BASE_API } = config
   export default {
     data() {
       return {
-        timeShow: false,
+        BASE_API: BASE_API,
+        num: 1,
+        adTime: '',
+        phoneShow: false,
+        payType: '金米粒支付',
+        payTypelist: [
+          {
+            name: '金米粒支付',
+          },
+          {
+            name: '房券抵扣',
+          },
+        ],
+        fx: 0,
         list: [
           {
             value: '1',
@@ -123,33 +170,56 @@
             label: '15:00',
           },
         ],
+        roomDetail: {},
+        packRoomList: [],
       }
     },
+    onLoad(option = {}) {
+      this.getRoomDetail(option.id)
+      this.fx = option.fx
+    },
     methods: {
+      getRoomDetail(id) {
+        this.$api.home.packDetail({ packId: id }).then((res = {}) => {
+          this.roomDetail = res.packDetail || {}
+          this.packRoomList = res.packRoomList || []
+        })
+      },
       goresults() {
         uni.showModal({
           title: '您确定要支付吗',
           success: (res) => {
             if (res.confirm) {
               let params = {
-                address: '千岛湖',
-                checkinAddress: '千岛湖',
-                checkinName: '求玮',
-                checkinPhone: '18405818220',
-                orderAmount: '222',
-                phone: '18405818220',
-                planDt: '2022/02/25',
-                productId: 2,
+                address: '某地9',
+                bnbId: 2,
+                checkinAddress: 'abcdefg',
+                checkinName: 'abcdefg',
+                checkinPhone: 'abcdefg',
+                couponAmount: 10,
+                couponType: 1,
+                endPrice: 2,
+                openid: 'abcdefg',
+                orderAmount: 499,
+                orderStatus: 1,
+                orderType: 1,
+                payType: 1,
+                phone: 15658077858,
+                planDt: '2022/03/22',
+                plusAmount: 13,
+                productId: 3,
+                productPrice: 399,
+                quantity: 3,
+                reservationPrice: 10,
               }
-              this.$api.home
-                .checkinOrder(params)
-                .then((res) => {
-                  // uni.navigateTo({
-                  //   //跳转页面
-                  //   url: '../resultssuccess/resultssuccess',
-                  // })
-                })
-                .catch((res = {}) => {})
+              this.$api.home.checkinOrder(params).then((res) => {
+                uni.showToast({ title: '购买成功～' })
+                setTimeout(() => {
+                  uni.switchTab({
+                    url: '/pages/orders/orders',
+                  })
+                }, 1500)
+              })
             } else if (res.cancel) {
               console.log('用户点击取消')
               uni.navigateTo({
@@ -208,6 +278,13 @@
         .card-right-four {
           font-size: 24rpx;
           color: #ff2d19;
+          display: flex;
+          align-items: center;
+          image {
+            width: 42rpx;
+            height: 42rpx;
+            margin-right: 8rpx;
+          }
           text {
             font-size: 32rpx;
             font-weight: 700;
@@ -245,7 +322,26 @@
         display: flex;
         padding: 20rpx 0;
         align-items: center;
-        border-top: 1rpx solid #f5f5f5;
+        border-bottom: 1rpx solid #f5f5f5;
+        .information-one-left {
+          width: 150rpx;
+        }
+      }
+      .information-two {
+        display: flex;
+        padding: 20rpx 20rpx;
+        align-items: center;
+        border-bottom: 1rpx solid #f5f5f5;
+        justify-content: space-between;
+        .flex_a {
+          display: flex;
+          align-items: center;
+          image {
+            width: 42rpx;
+            height: 42rpx;
+            margin-right: 8rpx;
+          }
+        }
         .information-one-left {
           width: 150rpx;
         }
@@ -313,17 +409,23 @@
   }
   .footer {
     width: 100%;
-    height: 100rpx;
     background-color: #fff;
     position: fixed !important;
     bottom: 0rpx;
     display: flex;
-    padding: 0 32rpx;
+    padding: 20rpx 32rpx 68rpx 32rpx;
     justify-content: space-between;
     align-items: center;
     .footer-left {
       color: #ff7919;
       font-size: 24rpx;
+      display: flex;
+      align-items: center;
+      image {
+        width: 42rpx;
+        height: 42rpx;
+        margin-right: 8rpx;
+      }
       text {
         font-size: 40rpx;
         font-weight: 700;

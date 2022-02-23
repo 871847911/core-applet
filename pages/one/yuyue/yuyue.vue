@@ -3,13 +3,13 @@
     <view class="card">
       <view class="card-one">
         <view class="card-one-left">
-          <image src="../../../static/images/位图(1).png" mode=""></image>
+          <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
         </view>
         <view class="card-one-right">
-          <view class="card-one-right-one"> 「2 晚 特 惠」 遇染民宿酒店，2晚连住低至7折，送… </view>
-          <view class="card-one-right-two">
-            2天1晚住宿+早餐+下午茶+年货伴手礼+限定款红包+夜宵
-          </view>
+          <view class="card-one-right-one">
+            {{ roomDetail.mainTitle }}{{ roomDetail.viceTitle }}</view
+          >
+          <view class="card-one-right-two">{{ roomDetail.description }}</view>
         </view>
       </view>
     </view>
@@ -22,61 +22,75 @@
       </view>
       <view class="information-one">
         <view class="information-one-left"> 手机号 </view>
-        <u-input placeholder="用于接受通知，请填写真实号码" v-model="form.intro" />
+        <u-input style="flex: 1" placeholder="用于接受通知，请填写真实号码" v-model="form.intro" />
       </view>
     </view>
 
     <view class="footer">
       <view class="footer-left"> <image src="/static/icon.png"></image><text>398</text></view>
-      <view class="footer-one" @click="phoneShow = true">
-        明细<image src="../../../static/images/立即抢购@2x.png" mode=""></image>
-      </view>
       <view class="footer-right" @tap="gosubmit()"> 提交订单 </view>
     </view>
-    <u-popup v-model="phoneShow" mode="bottom" height="400">
-      <view class="information">
-        <view class="information-two">
-          <view class=""> 在线支付 </view>
-          <view class="flex_a"><image src="/static/icon.png"></image><text>398</text></view>
-        </view>
-        <view class="information-two">
-          <view class=""> 原价 </view>
-          <view class="flex_a"><image src="/static/icon.png"></image><text>398</text></view>
-        </view>
-        <view class="information-two">
-          <view class=""> 预约金米粒抵扣 </view>
-          <view class="flex_a"><image src="/static/icon.png"></image><text>398</text></view>
-        </view>
-        <view class="information-two">
-          <view class=""> 膨胀金抵扣 </view>
-          <view class="flex_a"><image src="/static/icon.png"></image><text>398</text></view>
-        </view>
-      </view>
-    </u-popup>
   </view>
 </template>
 
 <script>
+  import config from '@/common/config.js'
+  const { BASE_API } = config
   export default {
     data() {
       return {
+        BASE_API: BASE_API,
         phoneShow: false,
         num: 0,
+        roomDetail: {},
+        packRoomList: {},
       }
     },
+    onLoad(option = {}) {
+      this.getRoomDetail(option.id)
+    },
     methods: {
+      getRoomDetail(id) {
+        this.$api.home.packDetail({ packId: id }).then((res = {}) => {
+          this.roomDetail = res.packDetail || {}
+          this.packRoomList = res.packRoomList || []
+        })
+      },
       bind(index) {
         this.num = index
       },
-      // 跳转提交订单页面
-      gosubmit() {},
+      gosubmit() {
+        let params = {
+          address: '',
+          bnbId: 2,
+          couponAmount: 10,
+          couponType: 1,
+          endPrice: 2,
+          orderAmount: 499,
+          orderType: 1,
+          payType: 1,
+          phone: 15658077858,
+          productId: 3,
+          productPrice: 399,
+          quantity: 3,
+          reservationPrice: 10,
+        }
+        this.$api.home.mainPageOrder(params).then((res = {}) => {
+          uni.showToast({ title: '购买成功～' })
+          setTimeout(() => {
+            uni.switchTab({
+              url: '/pages/orders/orders',
+            })
+          }, 1500)
+        })
+      },
     },
   }
 </script>
 
 <style scoped lang="scss">
   .information {
-    padding: 20rpx;
+    padding: 20rpx 20rpx 0 20rpx;
     background-color: #fff;
     .information-title {
       font-size: 28rpx;

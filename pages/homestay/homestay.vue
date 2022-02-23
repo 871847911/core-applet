@@ -55,7 +55,7 @@
           <view
             class="scenicspot-list-image"
             v-for="item in roomDetail.bnbPackList"
-            @click="gohousedetails"
+            @click="gohousedetails(item.id)"
             :key="item.id"
           >
             <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
@@ -82,18 +82,18 @@
         BASE_API: BASE_API,
       }
     },
-    onLoad() {
-      this.getRoomDetail()
+    onLoad(option = {}) {
+      this.getRoomDetail(option.id)
     },
     methods: {
-      gohousedetails() {
+      gohousedetails(id) {
         uni.navigateTo({
-          url: '../one/roomorder/roomorder',
+          url: `../one/roomorder/roomorder?id=${id}`,
         })
       },
-      getRoomDetail() {
+      getRoomDetail(bnbId) {
         this.$api.home
-          .bnbInfo({ bnbId: 2 })
+          .bnbInfo({ bnbId })
           .then((res) => {
             this.roomDetail = res
             this.list = [

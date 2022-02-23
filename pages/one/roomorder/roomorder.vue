@@ -1,9 +1,9 @@
 <template>
   <view class="warp">
     <view class="vr">
-      <image src="../../../static/images/图片.png" mode="heightFix"></image>
+      <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
       <view class="vr-vr">
-        <view class="vr-btn3" @click="gopicture"> 1/8 </view>
+        <view class="vr-btn3" @click="gopicture"> 1/1 </view>
       </view>
     </view>
 
@@ -12,7 +12,8 @@
       <view class="address">
         <view class="address-money">
           <view class="address-money-left">
-            <image src="/static/icon.png"></image><text>{{ roomDetail.defaultPrice }}</text>
+            <image src="/static/icon.png"></image>
+            <text>{{ roomDetail.defaultPrice + packRoomList[selectfx].addPrice }}</text>
           </view>
           <view class="" style="width: 32rpx; height: 32rpx">
             <image
@@ -34,10 +35,18 @@
 
       <!-- 可订日期 -->
       <view class="date">
-        <view class="date-title" v-for="(item, index) in 3" :key="index">
-          <view class="date-one"> 3-17 </view>
-          <view class="date-two"> 周三 </view>
-          <view class="date-three"> ¥ 1099起 </view>
+        <view
+          class="date-title"
+          v-for="(item, index) in dateList"
+          :key="index"
+          @click="selectDate = index"
+          :class="{ selectDate: selectDate === index }"
+        >
+          <view class="date-one"> {{ item.date }} </view>
+          <view class="date-two"> {{ item.title }} </view>
+          <view class="date-three">
+            {{ roomDetail.defaultPrice + packRoomList[selectfx].addPrice }}起
+          </view>
         </view>
         <view class="date-title-one" @click="calendarShow = true">
           <view class="date-title-one-top"> 查看更多 可订日期 </view>
@@ -47,19 +56,19 @@
         <view class="content-title">
           <view class="content-title-left">
             <view class="content-title-one"> </view>
-            <view class="content-title-two"> 遇染民宿酒店 </view>
+            <view class="content-title-two"> {{ roomDetail.name }} </view>
           </view>
         </view>
 
         <view class="content-list">
           <view
             class="content-list-one"
-            v-for="(item, index) in 5"
-            :class="{ activez: index == num }"
-            @click="bind(index)"
+            v-for="(item, index) in packRoomList"
+            :key="item.id"
+            :class="{ activez: index == selectfx }"
+            @click="handleClick(index)"
+            >{{ item.roomName }}</view
           >
-            红藕深 · 观景大床房
-          </view>
         </view>
       </view>
       <!-- <uni-calendar ref="calendar" :insert="false" :range="true" @confirm="confirm" /> -->
@@ -109,8 +118,8 @@
           <image src="../../../static/images/house.png" mode=""></image>
         </view>
         <view class="shop-title">
-          <view class="shop-title-top"> 笑意民宿 </view>
-          <view class="shop-title-bottom"> 中国传统文化传承民宿 </view>
+          <view class="shop-title-top"> {{ roomDetail.name }} </view>
+          <view class="shop-title-bottom"> {{ roomDetail.bnbDescription }} </view>
         </view>
         <view class="shop-btn" @click="goDetail"> 进入民宿 </view>
       </view>
@@ -126,136 +135,65 @@
             <view class="title-one-right" :class="{ activess: nums == 1 }"> </view>
           </view>
           <view class="title-one" @click="bind(2)">
-            <view class="title-one-left" :class="{ actives: nums == 2 }"> 代买需知 </view>
+            <view class="title-one-left" :class="{ actives: nums == 2 }"> 购买需知 </view>
             <view class="title-one-right" :class="{ activess: nums == 2 }"> </view>
           </view>
-          <view class="title-one" @click="bind(2)">
-            <view class="title-one-left" :class="{ actives: nums == 2 }"> 使用说明 </view>
-            <view class="title-one-right" :class="{ activess: nums == 2 }"> </view>
+          <view class="title-one" @click="bind(3)">
+            <view class="title-one-left" :class="{ actives: nums == 3 }"> 使用说明 </view>
+            <view class="title-one-right" :class="{ activess: nums == 3 }"> </view>
           </view>
         </view>
         <view class="">
           <view class="introduce-one" style="margin-top: 40rpx"> 商品信息 </view>
-          <view class="introduce-two"> Product Information </view>
           <view class="introduce-three"> </view>
-          <view class="introduce-four"> 【住】樱花/修竹大床房，杏会双人床，选1间2晚连住 </view>
-          <view class="introduce-four"> 【含】每日精选双人早餐 </view>
-          <view class="introduce-four"> 【含】入住期间双人正餐1份（三菜一汤，时令菜品） </view>
-          <view class="introduce-four"> 【含】欢迎水果一份 </view>
-          <view class="introduce-four"> 【含】双人下午茶1份（下午14-16点） </view>
-          <view class="introduce-four"> 【含】免费户外泳池、KTV、桌球、棋牌 </view>
-          <view class="introduce-four"> 【含】免费停车、免费WIFI </view>
           <view class="introduce-four">
-            【趣味体验】绿色农家菜园采摘、应季水果采摘（需收费）、宠物嬉戏（猫、狗、兔子）
-            注：2-3月挖笋、4月树梅野草莓、5月车厘子、6月蓝莓
+            <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
           </view>
-
+          <view class="introduce-five"> </view>
+        </view>
+        <view class="">
+          <view class="introduce-one" style="margin-top: 40rpx"> 图文描述 </view>
+          <view class="introduce-three"> </view>
+          <view class="introduce-four">
+            <image
+              :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.graphicDescId}`"
+              mode=""
+            ></image>
+          </view>
           <view class="introduce-five"> </view>
         </view>
 
         <view class="">
           <view class="introduce-one"> 购买需知 </view>
-          <view class="introduce-two"> Purchase Notes </view>
           <view class="introduce-three"> </view>
-          <view class="introduce-four"> 1、套餐有效期:有效期至2021.6.30 </view>
           <view class="introduce-four">
-            2、使用规则:周日至周五不加价、周六加价299元/间夜, 法定节假日加价599元/间夜(春
-            节2021年2月10日-16日,清明节2021年4月2日-4日，劳动节2021年4月30日-5月4日，端午节2021年06月11日-06月13日)
+            <image
+              :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.purchaseNotesId}`"
+              mode=""
+            ></image>
           </view>
-          <view class="introduce-four">
-            3、升级房型:在2条补差基础上，可补差100元/ 间夜升级到梵尘/探林(大床房)，
-            可补差400元/间夜升级到听涛/望月树屋/观星(树屋)注:观星树屋泡池使用需要另外收费300元/小时
-          </view>
-          <view class="introduce-four">
-            4、可入住人数:每间房仅限1- -2成人入住，1.4米(含)以下儿童享受不另收费，须大人陪同
-          </view>
-          <view class="introduce-four">
-            5、加床规则:仅梵尘、探林可加床，300元/床/晚(含早餐1份)
-          </view>
-          <view class="introduce-four">
-            6、加早规则:加早成人58元/位，儿童3岁以下免费, 3岁到12岁半价，12岁以上同成人
-          </view>
-          <view class="introduce-four">
-            7、宠物规则:可携带宠物(收宠物清洁费，小型犬100元/只，大型犬200元/只)
-          </view>
-          <view class="introduce-four"> 8、退改规则:未预约可退，预订成功后订单不可改退 </view>
-          <view class="introduce-four">
-            9、开票规则:本价格含税和服务费，若客人需要发票，由酒店给客人开具发票
-          </view>
-          <view class="introduce-four"> 10、入住时间:当日12点之后，离店时间:次日12:00前 </view>
           <view class="introduce-five"> </view>
         </view>
 
         <view class="">
           <view class="introduce-one"> 使用说明 </view>
-          <view class="introduce-two"> Instructions </view>
-          <view class="introduce-three" style="margin: 50rpx auto 36rpx"> </view>
+          <view class="introduce-three"> </view>
           <view class="introduce-four">
-            若确认出行日期，马上预订日期和房间入住，请直接选择“查房态”-选择日期、房间，订单支付后即为预订，商户接.单后即可入住。
-          </view>
-          <view class="introduce-four">
-            若暂未确认出行日期，请选择“立即囤券”，需要使用的时 候，进入[我的] -
-            [卡券]即可查询卡券并使用，点击[券]进入详情，点击券下方的[立即使用]按钮，即可进行使用，选择该房券适用的房型和入住/离店日期，勾选券，提交订单即可。
+            <image
+              :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.useExplanationId}`"
+              mode=""
+            ></image>
           </view>
         </view>
       </view>
-      <!-- 设施与服务 -->
       <view class="facilities">
         <view class="facilities-title"> 设施与服务 </view>
         <view class="facilities-list">
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-            </view>
-            <view class="list-one-title"> 免费停车 </view>
-          </view>
-          <view class="list-one">
+          <view v-for="item in facilities" :key="item.id" class="list-one">
             <view class="list-one-img">
               <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
             </view>
-            <view class="list-one-title1"> 地暖 </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-            </view>
-            <view class="list-one-title"> 洗衣机 </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-            </view>
-            <view class="list-one-title1"> 餐饮服务 </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-            </view>
-            <view class="list-one-title"> 免费停车 </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-            </view>
-            <view class="list-one-title1"> 空调 </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-            </view>
-            <view class="list-one-title"> 代驾服务 </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-            </view>
-            <view class="list-one-title1"> 免费WIFI </view>
-          </view>
-          <view class="list-one">
-            <view class="list-one-img">
-              <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-            </view>
-            <view class="list-one-title1"> 浴缸 </view>
+            <view class="list-one-title"> {{ item.name }} </view>
           </view>
         </view>
       </view>
@@ -282,181 +220,6 @@
         </view>
       </view>
     </view>
-    <!-- 详情弹窗 -->
-    <u-popup v-model="detailsShow" mode="bottom" height="1000" :closeable="true">
-      <view class="detailsShow">
-        <view class="detailsShow-title"> 房型详情 </view>
-        <view class="details-vr">
-          <view class="details-vr-img">
-            <image src="../../../static/images/位图.png" mode="widthFix"></image>
-          </view>
-          <view class="details-vr-btn"> 1/8 </view>
-        </view>
-        <view class="content">
-          <!-- 地址 -->
-          <view class="address">
-            <view class="" style="display: flex; justify-content: space-between">
-              <view class="">
-                <view class="address-title"> 遇染民宿酒店（杭州湖滨店） </view>
-                <view class="address-label">
-                  <image src="../../../static/images/标签@2x(2).png" mode=""></image>
-                  <image src="../../../static/images/标签@2x(1).png" mode=""></image>
-                  <image src="../../../static/images/标签@2x.png" mode=""></image>
-                </view>
-              </view>
-              <view class="" style="width: 32rpx; height: 32rpx">
-                <image
-                  style="width: 32rpx; height: 32rpx"
-                  src="../../../static/images/收藏@2x%20-%20万能看图王.png"
-                  mode=""
-                ></image>
-                <view class="" style="font-size: 16rpx; color: #333"> 收藏 </view>
-              </view>
-            </view>
-            <view class="address-map">
-              <view class="address-map-one">
-                <text>西湖湖滨商圈</text>
-                <text>平海路38号</text>
-              </view>
-              <view class="address-map-two">
-                <view class="map-one">
-                  <image src="../../../static/images/距离@2x.png" mode=""></image>
-                </view>
-                <view class="map-two"> 距离杭州体育馆3.4公里，驾车至此4.9公里，约17分钟 </view>
-                <view class="map-four"> </view>
-                <view class="map-three" @click="phoneShow = true">
-                  <image src="../../../static/images/位置@2x.png" mode=""></image>
-                </view>
-                <u-popup v-model="phoneShow" mode="bottom" height="300">
-                  <view
-                    class=""
-                    style="font-size: 28rpx; color: #999; text-align: center; margin: 40rpx auto"
-                  >
-                    400-1000-8899
-                  </view>
-                  <view class="" style="margin: 0 52rpx; background-color: #f5f5f5; height: 2rpx">
-                  </view>
-                  <view
-                    class=""
-                    style="font-size: 28rpx; color: #333; text-align: center; margin: 40rpx auto"
-                    @click="phone"
-                  >
-                    呼叫
-                  </view>
-                </u-popup>
-              </view>
-              <view class="address-map-three">
-                <view class="map-three-one"> 5.0评分 </view>
-                <view class="map-three-two" @click="gocomment"> 241条评论 > </view>
-              </view>
-            </view>
-          </view>
-          <!-- 设施与服务 -->
-          <view class="facilities">
-            <view class="facilities-title"> 设施与服务 </view>
-            <view class="facilities-list">
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-                </view>
-                <view class="list-one-title"> 免费停车 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 地暖 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-                </view>
-                <view class="list-one-title"> 洗衣机 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 餐饮服务 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-                </view>
-                <view class="list-one-title"> 免费停车 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 空调 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x.png" mode=""></image>
-                </view>
-                <view class="list-one-title"> 代驾服务 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 免费WIFI </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 浴缸 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> WIFI </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 空调 </view>
-              </view>
-              <view class="list-one">
-                <view class="list-one-img">
-                  <image src="../../../static/images/编组%205@2x(1).png" mode=""></image>
-                </view>
-                <view class="list-one-title1"> 衣柜 </view>
-              </view>
-            </view>
-          </view>
-          <!-- 订单必读 -->
-          <view class="order">
-            <view class="order-one"> 订单必读 </view>
-            <view class="order-two">
-              <view class="order-two-left">
-                <image src="../../../static/images/编组%207@2x(1).png" mode=""></image>
-              </view>
-              <view class="order-two-right"> 入离时间 </view>
-            </view>
-            <view class="order-three"> 入住时间:14:00之后 入住时间:14:00之后 </view>
-            <view class="order-two">
-              <view class="order-two-left">
-                <image src="../../../static/images/编组%207@2x(1).png" mode=""></image>
-              </view>
-              <view class="order-two-right"> 儿童及加床位 </view>
-            </view>
-            <view class="order-three"> 酒店允许携带儿童入住 </view>
-            <view class="order-three"> 不接受18岁以下客人在无监护人陪同的情况家入住 </view>
-            <view class="order-three">
-              加床政策、儿童人数请参考所选的客房政策，若超过户型限制人数，可能需要收取额外费用。提出的任何请求均需要获得酒店的确认，所有服务以酒店告知为主。
-            </view>
-          </view>
-          <!-- 房型报价 -->
-          <view class="details-btn"> 查看房型报价 </view>
-        </view>
-      </view>
-    </u-popup>
-
     <view class="footer">
       <view class="footer-one">
         <view class="footer-one-img2">
@@ -471,8 +234,8 @@
         <view class="footer-one-title"> 收藏 </view>
       </view> -->
       <!-- <view class="footer-two"> 加入我店 </view> -->
-      <view class="footer-two" @tap="gosubmit()"> 立即预订 </view>
-      <view class="footer-three"> 屯卷 </view>
+      <view class="footer-two" @tap="gosubmit"> 立即预订 </view>
+      <view class="footer-three" @tap="goyuyue"> 屯卷 </view>
     </view>
     <!-- 分享弹窗 -->
     <u-popup v-model="shareShow" mode="bottom" height="300" :closeable="true">
@@ -503,16 +266,20 @@
     <u-popup mode="bottom" v-model="calendarShow">
       <view class="calendar">
         <calendar
+          :datePriceList="datePriceList"
           :theme-color="'#00bbcc'"
           :is-fixed="false"
           :is-show="true"
           :start-date="startDate"
           :end-date="endDate"
           mode="2"
+          @getDatePrice="getDatePrice"
           @callback="confirm"
         >
           <template v-slot:header>
-            <view class="calendar-header">选择日期</view>
+            <view class="calendar-header">
+              <u-icon @click="calendarShow = false" name="close"></u-icon>
+            </view>
           </template>
           <template v-slot:footer>
             <view class="calendar-foot">
@@ -526,13 +293,18 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import Calendar from '@/components/mobile-calendar-simple/Calendar.vue'
+  import config from '@/common/config.js'
+  const { BASE_API } = config
+
   export default {
     components: {
       Calendar,
     },
     data() {
       return {
+        BASE_API: BASE_API,
         vrShow: true, //VR按钮显示
         num: 0,
         nums: 0,
@@ -546,27 +318,74 @@
         betweenEnd: '',
         calendarShow: false,
         roomDetail: {},
+        packRoomList: [],
+        selectfx: 0,
+        facilities: [],
+        dateList: [],
+        datePriceList: [],
+        selectDate: '',
       }
     },
     onLoad(option = {}) {
       this.getRoomDetail(option.id)
+      this.getDatePrice()
+      let list = []
+      const start = moment().format('x')
+      const end = moment().endOf('day').format('x')
+      this.timestamp = (end - start) / 1000
+      var week = ['一', '二', '三', '四', '五', '六', '日']
+      for (var i = 0; i < 3; i++) {
+        const index = moment()
+          .subtract(0 - i, 'days')
+          .day()
+        let data = {
+          title: '星期' + week[index - 1],
+          date: moment()
+            .subtract(0 - i, 'days')
+            .format('MM/DD'),
+        }
+        list.push(data)
+      }
+      this.dateList = list
     },
     methods: {
+      //计算未来几天价格
+      getDatePrice(day) {
+        this.datePriceList = []
+        for (var i = 0; i < 10; i++) {
+          let data = {
+            date: moment(day)
+              .subtract(0 - i, 'days')
+              .format('YYYY/MM/DD'),
+            price: '¥688',
+          }
+          this.datePriceList.push(data)
+        }
+      },
+      handleClick(index) {
+        this.selectfx = index
+      },
       goDetail() {
         uni.navigateTo({
-          url: '../../homestay/homestay',
+          url: `../../homestay/homestay?id=${this.roomDetail.bnbId}`,
         })
       },
       getRoomDetail(id) {
-        this.$api.home
-          .packDetail({ packId: id })
-          .then((res = {}) => {
-            this.roomDetail = res.packDetail
+        this.$api.home.packDetail({ packId: id }).then((res = {}) => {
+          this.roomDetail = res.packDetail || {}
+          this.packRoomList = res.packRoomList || []
+          let facilitiesList = res.packDetail.facilities.split(',')
+          this.$api.home.facilities().then((res = {}) => {
+            this.facilities = (res.rows || []).filter((item) =>
+              facilitiesList.includes(`${item.id}`)
+            )
+            console.log(this.facilities)
           })
-          .catch((res = {}) => {})
+        })
       },
       confirm(e) {
         console.log(e)
+        this.selectDate = ''
       },
       btn(index) {
         if (index == 0) {
@@ -625,13 +444,15 @@
       },
       // 跳转预约页面
       goyuyue() {
+        const id = this.roomDetail.id
         uni.navigateTo({
-          url: '../yuyue/yuyue',
+          url: `../yuyue/yuyue?id=${id}`,
         })
       },
       gosubmit() {
+        const id = this.roomDetail.id
         uni.navigateTo({
-          url: '../submit/submit',
+          url: `../submit/submit?id=${id}&fx=${this.selectfx}`,
         })
       },
     },
@@ -648,7 +469,7 @@
     .calendar-header {
       text-align: center;
       font-size: 32rpx;
-      padding: 150rpx 0 12rpx 0;
+      padding: 40rpx 0 40rpx 0;
     }
     .calendar-foot {
       padding: 20rpx 32rpx 68rpx 32rpx;
@@ -971,6 +792,10 @@
       border-radius: 10rpx;
       display: flex;
       justify-content: space-between;
+      .selectDate {
+        background: rgba(0, 187, 204, 0.1) !important;
+        border: 2rpx solid #00bbcc;
+      }
 
       .date-title {
         width: 148rpx;

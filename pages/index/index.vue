@@ -17,7 +17,6 @@
       <view class="swiper">
         <u-swiper :list="bannerList" height="360"></u-swiper>
       </view>
-
       <view class="content-list">
         <view class="content-list-one" @tap="gogroup(1)">
           <view class="content-list-top">
@@ -25,17 +24,17 @@
           </view>
           <view class="content-list-title"> 房源套餐 </view>
         </view>
-        <view class="content-list-one" @tap="gogroup(2)">
+        <view
+          v-for="(item, index) in packCategoryList"
+          :key="item.id"
+          class="content-list-one"
+          @tap="gogroup(item.id, item.name)"
+        >
           <view class="content-list-top">
-            <image src="../../static/images/旅客评价@2x.png" mode=""></image>
+            <image v-if="index === 0" src="../../static/images/旅客评价@2x.png" mode=""></image>
+            <image v-else src="../../static/images/联系我们@2x.png" mode=""></image>
           </view>
-          <view class="content-list-title"> 活动·团建 </view>
-        </view>
-        <view class="content-list-one" @tap="gogroup(3)">
-          <view class="content-list-top">
-            <image src="../../static/images/联系我们@2x.png" mode=""></image>
-          </view>
-          <view class="content-list-title"> 家庭·亲子 </view>
+          <view class="content-list-title"> {{ item.name }} </view>
         </view>
       </view>
 
@@ -75,7 +74,7 @@
         <view class="hot-scenery">
           <block v-for="(item, index) in hotCityList" :key="item.id">
             <view v-if="index < 3" class="hot-scenery-list">
-              <view class="hot-scenery-img">
+              <view @click="goregion(item)" class="hot-scenery-img">
                 <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.site}`" mode=""></image>
               </view>
               <view class="hot-scenery-city"> {{ item.city }} </view>
@@ -137,7 +136,7 @@
             @click="gocomment(item.id)"
           >
             <view class="content-recommend-two-one">
-              <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
+              <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picId}`" mode=""></image>
             </view>
             <view class="content-recommend-two-two">
               {{ item.mainTitle }}{{ item.viceTitle }}
@@ -187,25 +186,27 @@
         seckill: null,
         hotCityList: [],
         packList: [],
-        bannerList: [],
+        packCategoryList: [],
       }
     },
 
     onLoad() {
       // this.getNavCate()
+      this.getpackCategoryPage()
     },
     onShow() {
       this.getNavCate()
-      // this.getBannerList()
+      //
     },
     methods: {
-      getBannerList() {
-        this.$api.home.bannerList().then((res) => {
-          uni.hideLoading()
-          this.bannerList = res.rows.map((c) => {
-            c.title = c.packId
-            c.image = BASE_API + '/sysFileInfo/preview?id=' + c.imgId
-          })
+      goregion(item) {
+        uni.navigateTo({
+          url: `../homestay/region/region?id=${item.id}&name=${item.city}`,
+        })
+      },
+      getpackCategoryPage() {
+        this.$api.home.packCategoryPage().then((res = {}) => {
+          this.packCategoryList = res.rows || []
         })
       },
       // 去往搜索页面
@@ -221,9 +222,9 @@
         })
       },
       // 去往团建民宿
-      gogroup(type) {
+      gogroup(id, name) {
         uni.navigateTo({
-          url: `../homestay/group/group?type=${type}`,
+          url: `../homestay/group/group?id=${id}&name=${name}`,
         })
       },
       // 去往亲子页面
@@ -277,8 +278,9 @@
       },
       // 跳转抢购商品详情
       gospecial() {
+        const id = this.seckill.packId
         uni.navigateTo({
-          url: '../one/special/special',
+          url: `../one/special/special?id=${id}`,
         })
       },
       choseshare() {
@@ -297,10 +299,7 @@
           } = res || {}
           let list = []
           bannerList.map((c) => {
-            list.push({
-              title: c.packId,
-              image: BASE_API + '/sysFileInfo/preview?id=' + c.site,
-            })
+            list.push(BASE_API + '/sysFileInfo/preview?id=' + c.site)
           })
           console.log(list)
           this.bannerList = list
