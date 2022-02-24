@@ -263,7 +263,7 @@
         {
           "path": "picture/picture",
           "style": {
-            "navigationBarTitleText": "房型图片",
+            "navigationBarTitleText": "",
             "enablePullDownRefresh": false,
             "navigationBarBackgroundColor": "#fff"
           }

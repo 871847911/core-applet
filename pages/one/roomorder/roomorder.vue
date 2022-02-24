@@ -1,9 +1,20 @@
 <template>
   <view class="warp">
-    <view class="vr">
+    <!-- <view class="vr">
       <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
       <view class="vr-vr">
         <view class="vr-btn3" @click="gopicture"> 1/1 </view>
+      </view>
+    </view> -->
+    <view class="vr" @click="goVr">
+      <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
+      <view class="vr-btn" v-if="vrShow">
+        <image :src="`../../../static/images/首页.png`" mode=""></image>
+      </view>
+      <view class="vr-vr">
+        <view class="vr-btn1" @click="vrShow = !vrShow" :class="{ active: vrShow }"> VR </view>
+        <view class="vr-btn2" @click="vrShow = !vrShow" :class="{ active: !vrShow }"> 图片 </view>
+        <view class="vr-btn3" v-if="!vrShow"> 1/1 </view>
       </view>
     </view>
 
@@ -349,6 +360,12 @@
       this.dateList = list
     },
     methods: {
+      goVr() {
+        uni.setStorageSync('WEBVIEW_URL',this.roomDetail.vr)
+        uni.navigateTo({
+          url: '../picture/picture',
+        })
+      },
       //计算未来几天价格
       getDatePrice(day) {
         this.datePriceList = []
@@ -512,9 +529,28 @@
     .vr-vr {
       position: absolute;
       top: 476rpx;
-      left: 630rpx;
+      left: 294rpx;
       display: flex;
-
+      .vr-btn1 {
+        width: 70rpx;
+        height: 40rpx;
+        background-color: rgba(255, 255, 255, 0.6);
+        line-height: 40rpx;
+        text-align: center;
+        font-size: 22rpx;
+        border-radius: 20rpx;
+        margin-right: 10rpx;
+      }
+      .vr-btn2 {
+        width: 84rpx;
+        height: 40rpx;
+        background-color: rgba(255, 255, 255, 0.6);
+        line-height: 40rpx;
+        text-align: center;
+        font-size: 22rpx;
+        border-radius: 20rpx;
+        margin-right: 185rpx;
+      }
       .vr-btn3 {
         width: 74rpx;
         height: 40rpx;
