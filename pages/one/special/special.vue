@@ -195,7 +195,10 @@
         <view class="footer-one-title"> 收藏 </view>
       </view> -->
       <!-- <view class="footer-two"> 加入我店 </view> -->
-      <view class="footer-two" @click.stop="toPay"> 立即抢购 </view>
+      <view v-if="status === 0" class="footer-two" @click.stop="toPay"> 预约 </view>
+      <view v-if="status === 1" class="footer-two" @click.stop="toPay"> 立即抢购 </view>
+      <view v-if="status === 2" class="footer-two disabled"> 售罄 </view>
+      <view v-if="status === 4" class="footer-two disabled"> 已结束 </view>
     </view>
     <!-- 分享弹窗 -->
     <u-popup v-model="shareShow" mode="bottom" height="300" :closeable="true">
@@ -284,10 +287,14 @@
         dateList: [],
         datePriceList: [],
         selectDate: '',
+        status: '',
+        activityId: '',
       }
     },
     onLoad(option = {}) {
-      this.getRoomDetail(option.id)
+      this.getRoomDetail(option.id, option.activityId)
+      this.activityId = option.activityId
+      this.status = option.status ? Number(option.status) : ''
       this.getDatePrice()
       let list = []
       const start = moment().format('x')
@@ -299,7 +306,7 @@
           .subtract(0 - i, 'days')
           .day()
         let data = {
-          title: '星期' + week[index - 1],
+          title: '星期' + index == 0 ? week[6] : week[index - 1],
           date: moment()
             .subtract(0 - i, 'days')
             .format('MM/DD'),
@@ -311,7 +318,7 @@
     methods: {
       toPay() {
         uni.navigateTo({
-          url: '../yuyue/yuyue',
+          url: `../yuyue/yuyue?id=${this.roomDetail.id}&activityId=${this.activityId}`,
         })
       },
       //计算未来几天价格
@@ -335,8 +342,8 @@
           url: `../../homestay/homestay?id=${this.roomDetail.bnbId}`,
         })
       },
-      getRoomDetail(id) {
-        this.$api.home.packDetail({ packId: id }).then((res = {}) => {
+      getRoomDetail(id, activityId) {
+        this.$api.home.packDetail({ packId: id, activityId }).then((res = {}) => {
           this.roomDetail = res.packDetail || {}
           this.packRoomList = res.packRoomList || []
           let facilitiesList = res.packDetail.facilities.split(',')
@@ -1146,6 +1153,9 @@
       font-size: 28rpx;
       text-align: center;
       line-height: 80rpx;
+    }
+    .disabled {
+      background: #999;
     }
   }
   .detailsShow {

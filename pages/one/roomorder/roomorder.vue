@@ -35,7 +35,8 @@
             <view class="" style="font-size: 16rpx; color: #333"> 收藏 </view>
           </view>
         </view>
-        <view class="address-title">{{ roomDetail.mainTitle }}{{ roomDetail.viceTitle }}</view>
+        <view class="address-title">{{ roomDetail.mainTitle }}</view>
+        <view class="address-title">{{ roomDetail.viceTitle }}</view>
         <view class="address-title-one">{{ roomDetail.description }}</view>
 
         <view class="address-time">
@@ -50,8 +51,8 @@
           class="date-title"
           v-for="(item, index) in dateList"
           :key="index"
-          @click="selectDate = index"
-          :class="{ selectDate: selectDate === index }"
+          @click="selectDate = item.value"
+          :class="{ selectDate: selectDate === item.value }"
         >
           <view class="date-one"> {{ item.date }} </view>
           <view class="date-two"> {{ item.title }} </view>
@@ -110,7 +111,7 @@
               class=""
               style="font-size: 28rpx; color: #999; text-align: center; margin: 40rpx auto"
             >
-              400-1000-8899
+              {{ roomDetail.tel }}
             </view>
             <view class="" style="margin: 0 52rpx; background-color: #f5f5f5; height: 2rpx"> </view>
             <view
@@ -246,7 +247,7 @@
       </view> -->
       <!-- <view class="footer-two"> 加入我店 </view> -->
       <view class="footer-two" @tap="gosubmit"> 立即预订 </view>
-      <view class="footer-three" @tap="goyuyue"> 屯卷 </view>
+      <view class="footer-three" @tap="goyuyue"> 屯券 </view>
     </view>
     <!-- 分享弹窗 -->
     <u-popup v-model="shareShow" mode="bottom" height="300" :closeable="true">
@@ -283,7 +284,7 @@
           :is-show="true"
           :start-date="startDate"
           :end-date="endDate"
-          mode="2"
+          mode="1"
           @getDatePrice="getDatePrice"
           @callback="confirm"
         >
@@ -339,7 +340,6 @@
     },
     onLoad(option = {}) {
       this.getRoomDetail(option.id)
-      this.getDatePrice()
       let list = []
       const start = moment().format('x')
       const end = moment().endOf('day').format('x')
@@ -349,19 +349,24 @@
         const index = moment()
           .subtract(0 - i, 'days')
           .day()
+        console.log(index)
         let data = {
-          title: '星期' + week[index - 1],
+          title: '星期' + index==0?week[6]:week[index - 1],
           date: moment()
             .subtract(0 - i, 'days')
             .format('MM/DD'),
+          value: moment()
+            .subtract(0 - i, 'days')
+            .format('YYYY-MM-DD'),
         }
         list.push(data)
       }
       this.dateList = list
+      console.log(list)
     },
     methods: {
       goVr() {
-        uni.setStorageSync('WEBVIEW_URL',this.roomDetail.vr)
+        uni.setStorageSync('WEBVIEW_URL', this.roomDetail.vr)
         uni.navigateTo({
           url: '../picture/picture',
         })
@@ -374,13 +379,17 @@
             date: moment(day)
               .subtract(0 - i, 'days')
               .format('YYYY/MM/DD'),
-            price: '¥688',
+            price:
+              this.roomDetail.defaultPrice +
+              ((this.packRoomList[this.selectfx] && this.packRoomList[this.selectfx].addPrice) ||
+                0),
           }
           this.datePriceList.push(data)
         }
       },
       handleClick(index) {
         this.selectfx = index
+        this.getDatePrice()
       },
       goDetail() {
         uni.navigateTo({
@@ -396,13 +405,13 @@
             this.facilities = (res.rows || []).filter((item) =>
               facilitiesList.includes(`${item.id}`)
             )
-            console.log(this.facilities)
+            this.getDatePrice()
           })
         })
       },
       confirm(e) {
         console.log(e)
-        this.selectDate = ''
+        this.selectDate = moment(e.startStr.dateStr).format('YYYY-MM-DD')
       },
       btn(index) {
         if (index == 0) {
@@ -436,7 +445,7 @@
       phone() {
         uni.makePhoneCall({
           // 手机号
-          phoneNumber: '40010008899',
+          phoneNumber: this.roomDetail.tel,
           // 成功回调
           success: (res) => {
             console.log('调用成功!')
@@ -467,9 +476,11 @@
         })
       },
       gosubmit() {
+        if (!this.selectDate)
+          return uni.showToast({ title: '请选择入住日期', mask: true, icon: 'none' })
         const id = this.roomDetail.id
         uni.navigateTo({
-          url: `../submit/submit?id=${id}&fx=${this.selectfx}`,
+          url: `../submit/submit?id=${id}&fx=${this.selectfx}&selectDate=${this.selectDate}`,
         })
       },
     },

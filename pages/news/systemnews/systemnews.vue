@@ -1,6 +1,7 @@
 <template>
   <view class="warp">
-    <view class="content">
+    <mescroll-empty :option="emptyOption"></mescroll-empty>
+    <!-- <view class="content">
       <view class="box">
         <view class="box-time"> 1月10日 中午11:05 </view>
         <view class="box-title">
@@ -30,14 +31,20 @@
           </view>
         </view>
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
 
 <script>
   export default {
     data() {
-      return {}
+      return {
+        emptyOption: {
+          tip: '暂无消息', // 提示
+          btnText: '',
+          icon: '/static/empty/empty.png',
+        },
+      }
     },
     methods: {},
   }

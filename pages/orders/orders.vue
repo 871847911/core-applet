@@ -1,14 +1,5 @@
 <template>
   <view class="warp">
-    <view class="slot-wrap">
-      <u-search
-        placeholder="搜索你想要的商品"
-        shape="square"
-        :show-action="fasle"
-        v-model="keyword"
-      >
-      </u-search>
-    </view>
     <view class="">
       <view class="tab">
         <view
@@ -39,55 +30,40 @@
     </view>
     <view class="content">
       <!-- 全部订单 -->
-      <view class="one">
-        <view class="list">
+      <view class="one" v-if="list && list.length > 0">
+        <view class="list" v-for="item in list" :key="item.order_id">
           <view class="list-one">
-            <view class="list-one-left"> 该订单将在<text>14:35:25</text>后关闭 </view>
-            <view class="list-one-right"> 待付款 </view>
-          </view>
-          <view class="cards" @click="gopayment()">
-            <view class="card-left">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one"> 遇染民宿酒店 <text>预订单</text> </view>
-              <view class="card-right-two"> 温馨家庭房 </view>
-
-              <view class="card-right-four"> <text>398</text>金米粒 </view>
-            </view>
-          </view>
-
-          <view class="list-four">
-            <!-- <view class="list-four-left">
-							取消订单
-						</view> -->
-            <view class="list-four-right"> 立即付款 </view>
-          </view>
-        </view>
-
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13至2021/03/14 1天1晚 </view>
-            <view class="list-one-right"> 待使用 </view>
+            <!-- <view class="list-one-left"> 2021/03/13至2021/03/14 1天1晚 </view> -->
+            <view class="list-one-left"> 订单号：{{ item.order_id }} </view>
+            <view class="list-one-right"> {{ status[item.order_status] }} </view>
           </view>
           <view class="cards" @click="gopending()">
             <view class="card-left">
               <image src="../../static/images/house.png" mode=""></image>
             </view>
             <view class="card-right">
-              <view class="card-right-one"> 遇染民宿酒店（杭州湖滨店） </view>
-              <view class="card-right-two"> 温馨家庭房 </view>
+              <view class="card-right-one">{{ item.mainTitle }} </view>
+              <view class="card-right-two"> {{ item.room_name }} </view>
 
-              <view class="card-right-four"> <text>398</text>金米粒 </view>
+              <view class="card-right-four">
+                <image src="/static/icon.png"></image>
+                <text>{{ item.order_amount }}</text>
+              </view>
             </view>
           </view>
-          <view class="list-four">
-            <view class="list-four-left"> 申请退款 </view>
-            <view class="list-four-right"> 我要屯卷 </view>
+          <view v-if="item.order_type === 2" class="list-four">
+            <view
+              v-if="item.order_status === 2"
+              @click="queren(item.order_id)"
+              class="list-four-left"
+            >
+              确认入住
+            </view>
+            <view v-if="item.order_status === 3" class="list-four-left"> 确认退房 </view>
+            <view class="list-four-right" @click="tunquan(item.product_id)"> 我要屯券 </view>
           </view>
         </view>
-
-        <view class="list">
+        <!-- <view class="list">
           <view class="list-one">
             <view class="list-one-left"> 2021/03/13至2021/03/14 1天1晚 </view>
             <view class="list-one-right"> 待处理 </view>
@@ -219,251 +195,22 @@
           <view class="list-four">
             <view class="list-four-left"> 确认入住 </view>
           </view>
-        </view>
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 待付款 </view>
-          </view>
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="list-four">
-            <!-- <view class="list-four-left">
-							取消订单
-						</view> -->
-            <view class="list-four-right"> 提醒付款 </view>
-          </view>
-        </view>
-
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 待处理 </view>
-          </view>
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-          <view class="list-four">
-            <view class="list-four-left"> 参看物流 </view>
-            <view class="list-four-right"> 一件预定 </view>
-          </view>
-        </view>
-
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 待处理 </view>
-          </view>
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="list-four">
-            <view class="list-four-left"> 查看物流 </view>
-
-            <view class="list-four-right"> 立即发货 </view>
-          </view>
-        </view>
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 待处理 </view>
-          </view>
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="list-four">
-            <view class="list-four-left"> 查看物流 </view>
-
-            <view class="list-four-right"> 立即发货 </view>
-          </view>
-        </view>
-
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 待收货 </view>
-          </view>
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="list-four">
-            <view class="list-four-left"> 查看售后 </view>
-            <view class="list-four-left"> 查看物流 </view>
-            <view class="list-four-right"> 提醒收获 </view>
-          </view>
-        </view>
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 已完成 </view>
-          </view>
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="list-four">
-            <view class="list-four-left"> 查看售后 </view>
-            <view class="list-four-left"> 查看物流 </view>
-            <view class="list-four-right"> 提醒评价 </view>
-          </view>
-        </view>
-        <view class="list">
-          <view class="list-one">
-            <view class="list-one-left"> 2021/03/13 14:30:49 </view>
-            <view class="list-one-right"> 取消/退款中 </view>
-          </view>
-          <!-- <view class="cards" @click="gocheckin()">
-						<view class="card-left">
-							<image src="../../static/images/house.png" mode=""></image>
-						</view>
-						<view class="card-right">
-							<view class="card-right-one">
-								遇染民宿酒店（杭州湖滨店）
-							</view>
-							<view class="card-right-two">
-								温馨家庭房
-							</view>
-							
-							<view class="card-right-four">
-								<text>398</text>金米粒
-							</view>
-						</view>
-					</view> -->
-          <view class="card" @tap="goshoppayment()">
-            <view class="card-img">
-              <image src="../../static/images/house.png" mode=""></image>
-            </view>
-            <view class="card-right">
-              <view class="card-right-one">
-                春季男士新款棒球服男韩版潮流百搭宽松帅气夹克男装休…
-              </view>
-              <view class="card-right-two">
-                <view class="card-right-two-left"> 白色XL </view>
-                <view class="card-right-two-right"> *1 </view>
-              </view>
-              <view class="card-right-three">
-                <view class="card-right-three-left"> <text>398</text>金米粒 </view>
-              </view>
-            </view>
-          </view>
-
-          <!-- <view class="list-four"  >
-						<view class="list-four-left">
-							查看售后
-						</view>
-						<view class="list-four-left">
-							查看物流
-						</view>
-						<view class="list-four-right">
-							提醒评价
-						</view>
-					</view> -->
-        </view>
+        </view> -->
       </view>
+      <mescroll-empty v-else :option="emptyOption"></mescroll-empty>
     </view>
   </view>
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   export default {
     data() {
       return {
         num: 0, //一级选项
         tabIndex: 0, //二级选项
-        tabShow: false, //二级菜单是否显示
+        tabShow: true, //二级菜单是否显示
         onelist: [
-          {
-            name: '全部订单',
-          },
           {
             name: '房源采购',
           },
@@ -474,43 +221,87 @@
         twolist: [
           {
             name: '全部类型',
-            id: 'tuijian',
+            id: -1,
           },
           {
-            name: '待付款',
-            id: 'qingjie',
+            name: '待确认',
+            id: 0,
           },
           {
-            name: '待使用',
-            id: '纸品',
+            name: '已使用',
+            id: 1,
           },
           {
             name: '待入住',
-            id: 'tiyu',
+            id: 2,
+          },
+          {
+            name: '已入住',
+            id: 3,
           },
           {
             name: '已离店',
-            id: 'caijing',
+            id: 4,
           },
           {
-            name: '已付款',
-            id: 'yule',
+            name: '已预约',
+            id: 5,
           },
         ],
+        list: [],
+        status: ['已支付', '已使用', '待入住', '已入住', '已离店', '已预约'],
+        emptyOption: {
+          tip: '暂无数据', // 提示
+          btnText: '',
+          icon: '/static/empty/empty.png',
+        },
+      }
+    },
+    computed: {
+      ...mapState({
+        IS_LOGIN: (state) => state.IS_LOGIN, //登陆状态
+        USERINFO: (state) => state.USERINFO, //用户信息
+      }),
+    },
+    onShow() {
+      if (this.IS_LOGIN) {
+        this.getData()
       }
     },
     methods: {
+      tunquan(id) {
+        uni.navigateTo({
+          url: `/pages/one/yuyue/yuyue?id=${id}`,
+        })
+      },
+      queren(orderId) {
+        this.$api.home.confirmCheckIn({ orderId }).then((res = []) => {
+          uni.showToast({ title: '操作成功～' })
+          this.getData()
+        })
+      },
+      getData() {
+        let params = {
+          orderStatus: this.tabIndex - 1 < 0 ? '' : this.tabIndex - 1,
+        }
+        if (this.num === 1) {
+          params = {
+            ...params,
+            proprietorId: this.USERINFO.id,
+          }
+        }
+        this.$api.home.queryOrder(params).then((res = []) => {
+          console.log(res)
+          this.list = res || []
+        })
+      },
       toggleTabone(index) {
         this.num = index
-        console.log(this.num)
-        if (index == 0) {
-          this.tabShow = false
-        } else {
-          this.tabShow = true
-        }
+        this.getData()
       },
       toggleTabtwo(index) {
         this.tabIndex = index
+        this.getData()
       },
     },
   }
@@ -702,6 +493,13 @@
             .card-right-four {
               font-size: 24rpx;
               color: #ff2d19;
+              display: flex;
+              align-items: center;
+              image {
+                width: 42rpx;
+                height: 42rpx;
+                margin-right: 8rpx;
+              }
               text {
                 font-size: 32rpx;
                 font-weight: 700;

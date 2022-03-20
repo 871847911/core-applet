@@ -12,12 +12,12 @@
       </view>
     </u-navbar>
 
-    <view class="content">
+    <view v-if="IS_LOGIN" class="content">
       <!-- 轮播 -->
       <view class="swiper">
         <u-swiper :list="bannerList" height="360"></u-swiper>
       </view>
-      <view class="content-list">
+      <view v-if="packCategoryList.length > 0" class="content-list">
         <view class="content-list-one" @tap="gogroup(1)">
           <view class="content-list-top">
             <image src="../../static/images/酒店位置.png" mode=""></image>
@@ -64,7 +64,7 @@
         </view>
       </view>
       <!-- 热门目的地 -->
-      <view class="hot">
+      <view v-if="hotCityList.length > 0" class="hot">
         <view class="hot-title">
           <view class="hot-title-left"> 热门目的地 </view>
           <view class="hot-title-right" @tap="godestination()">
@@ -160,18 +160,21 @@
         </view>
       </view>
     </view>
-
     <!-- <u-popup v-model="showModel" mode="center">
 			<view class="yhq"><image src="../../static/images/新用户活动弹窗.png" mode=""></image></view>
 		</u-popup> -->
 
     <!-- <share @choseshare='choseshare' :shareShow='shareShow'></share> -->
+    <view style="height: 400rpx" v-else>
+      <mescroll-empty @emptyclick="emptyClick" :option="emptyOption"></mescroll-empty>
+    </view>
   </view>
 </template>
 
 <script>
   import share from '@/components/share'
   import config from '@/common/config.js'
+  import { mapState } from 'vuex'
   const { BASE_API } = config
   export default {
     components: {
@@ -187,16 +190,27 @@
         hotCityList: [],
         packList: [],
         packCategoryList: [],
+        bannerList: [],
+        emptyOption: {
+          tip: '登录后查看', // 提示
+          btnText: '去登录',
+          icon: '/static/empty/empty.png',
+        },
       }
     },
-
-    onLoad() {
-      // this.getNavCate()
-      this.getpackCategoryPage()
+    computed: {
+      ...mapState({
+        IS_LOGIN: (state) => state.IS_LOGIN, //登陆状态
+        USERINFO: (state) => state.USERINFO, //用户信息
+      }),
     },
+    onLoad() {},
     onShow() {
-      this.getNavCate()
-      //
+      const token = uni.getStorageSync('TOKEN')
+      if (this.IS_LOGIN || token) {
+        this.getNavCate()
+        this.getpackCategoryPage()
+      }
     },
     methods: {
       goregion(item) {
@@ -207,6 +221,11 @@
       getpackCategoryPage() {
         this.$api.home.packCategoryPage().then((res = {}) => {
           this.packCategoryList = res.rows || []
+        })
+      },
+      emptyClick() {
+        uni.navigateTo({
+          url: '/pages/account/auth/login/login',
         })
       },
       // 去往搜索页面
@@ -280,7 +299,7 @@
       gospecial() {
         const id = this.seckill.packId
         uni.navigateTo({
-          url: `../one/special/special?id=${id}`,
+          url: `../one/special/special?id=${id}&activityId=${this.seckill.id}&status=${this.seckill.status}`,
         })
       },
       choseshare() {
@@ -299,9 +318,13 @@
           } = res || {}
           let list = []
           bannerList.map((c) => {
-            list.push(BASE_API + '/sysFileInfo/preview?id=' + c.site)
+            let obj = {
+              image: BASE_API + '/sysFileInfo/preview?id=' + c.site,
+              title: '',
+            }
+            list.push(obj)
           })
-          console.log(list)
+          console.log(list, 'bannerList')
           this.bannerList = list
           this.hotCityList = hotCityList
           this.packList = hotPackList
@@ -319,8 +342,10 @@
     color: #fff;
   }
   .warp {
+    min-height: 100vh;
     background-color: #f7f7f7;
     position: relative;
+    overflow: scroll;
   }
   .slot-wrap {
     display: flex;
@@ -336,6 +361,7 @@
 
   .content {
     margin: 0 32rpx;
+    height: 100vh;
     .swiper {
       margin-top: 20rpx;
     }

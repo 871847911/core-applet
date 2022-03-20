@@ -53,7 +53,7 @@
         <!-- 我的订单 -->
         <view class="order">
           <view class="order-list">
-            <view class="order-list-one">
+            <view class="order-list-one" @click="gomyorder()">
               <view class="order-list-one-top">
                 <u-icon name="calendar" size="48"></u-icon>
               </view>
@@ -63,7 +63,7 @@
               <view class="order-list-one-top">
                 <u-icon name="red-packet" size="48"></u-icon>
               </view>
-              <view class="order-list-one-bottom"> 囤货/屯卷 </view>
+              <view class="order-list-one-bottom"> 囤卷 </view>
             </view>
             <view class="order-list-one" @click="gomyorder()">
               <view class="order-list-one-top">
@@ -128,7 +128,9 @@
       }),
     },
     onShow() {
-      this.getMoney()
+      if (this.IS_LOGIN) {
+        this.getMoney()
+      }
     },
     onLoad() {},
     methods: {
@@ -148,7 +150,7 @@
           url: '../my/integral/integral',
         })
       },
-      // 跳转优惠券
+      // 跳转房券
       gocoupon() {
         uni.navigateTo({
           url: '../my/coupon/coupon',

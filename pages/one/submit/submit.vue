@@ -12,10 +12,10 @@
             </view>
             <view class="card-right-two"> {{ packRoomList[fx].roomName }} </view>
             <view class="card-right-three">
-              <text>03/18入住</text>
+              <text>{{ startData }}入住</text>
               <text>至</text>
-              <text>03/19离店</text>
-              <text>1晚</text>
+              <text>{{ endData }}离店</text>
+              <text>{{ roomDetail.dayCount }}晚</text>
             </view>
             <view class="card-right-four">
               <image src="/static/icon.png"></image>
@@ -24,26 +24,22 @@
           </view>
         </view>
 
-        <view class="num">
+        <!-- <view class="num">
           <view class="num-left"> 房间数量 </view>
           <view class="num-right">
             <u-number-box v-model="num" :min="1" :max="roomDetail.defaultStock"></u-number-box>
           </view>
-        </view>
+        </view> -->
 
         <view class="information">
           <view class="information-title"> 入住信息 </view>
           <view class="information-one">
             <view class="information-one-left"> 入住人 </view>
-            <u-input style="flex: 1" placeholder="请填写实际入住人姓名" v-model="form.name" />
+            <u-input style="flex: 1" placeholder="请填写实际入住人姓名" v-model="name" />
           </view>
           <view class="information-one">
             <view class="information-one-left"> 手机号 </view>
-            <u-input
-              style="flex: 1"
-              placeholder="用于接受通知，请填写真实号码"
-              v-model="form.intro"
-            />
+            <u-input style="flex: 1" placeholder="用于接受通知，请填写真实号码" v-model="phone" />
           </view>
           <view class="information-one">
             <view class="information-one-left"> 预计到店 </view>
@@ -51,7 +47,7 @@
           </view>
           <view class="information-one">
             <view class="information-one-left"> 备注 </view>
-            <u-input style="flex: 1" placeholder="选填，请先与客服协调一致" v-model="form.sex" />
+            <u-input style="flex: 1" placeholder="选填，请先与客服协调一致" v-model="remark" />
           </view>
         </view>
         <u-popup v-model="phoneShow" mode="bottom" height="400">
@@ -134,13 +130,13 @@
 
 <script>
   import config from '@/common/config.js'
+  import moment from 'moment'
   const { BASE_API } = config
   export default {
     data() {
       return {
         BASE_API: BASE_API,
         num: 1,
-        adTime: '',
         phoneShow: false,
         payType: '金米粒支付',
         payTypelist: [
@@ -172,47 +168,82 @@
         ],
         roomDetail: {},
         packRoomList: [],
+        selectDate: '',
+        startData: '',
+        endData: '',
+        name: '',
+        phone: '',
+        remark: '',
+        adTime: '',
+        couponIdList: [],
       }
     },
     onLoad(option = {}) {
-      this.getRoomDetail(option.id)
+      this.getRoomDetail(option.id, option.selectDate)
       this.fx = option.fx
+      this.selectDate = option.selectDate
     },
     methods: {
-      getRoomDetail(id) {
+      radioGroupChange(e) {
+        console.log(e)
+      },
+      radioChange(e) {
+        console.log(e)
+      },
+      getRoomDetail(id, selectDate) {
         this.$api.home.packDetail({ packId: id }).then((res = {}) => {
           this.roomDetail = res.packDetail || {}
           this.packRoomList = res.packRoomList || []
+          this.startData = moment(selectDate).format('MM/DD')
+          this.endData = moment(selectDate)
+            .subtract(0 - res.packDetail.dayCount, 'days')
+            .format('MM/DD')
+          this.$nextTick(() => {
+            this.getPrice()
+            this.getFq()
+          })
+        })
+      },
+      getPrice() {
+        let params = {
+          planDate: moment(this.selectDate).format('YYYY/MM/DD'),
+          productId: this.roomDetail.id,
+          roomId: this.packRoomList[this.fx].id,
+        }
+        this.$api.home.validateCheckInOrder(params).then((res = {}) => {})
+      },
+      getFq() {
+        let params = {
+          productId: this.roomDetail.id,
+          status: 0,
+        }
+        this.$api.home.queryCoupon(params).then((res = {}) => {
+          this.couponIdList = res.couponDetailList
+          console.log(res, '123123123123')
         })
       },
       goresults() {
+        if (!this.name || !this.phone)
+          return uni.showToast({ title: '请填写入住信息', mask: true, icon: 'none' })
         uni.showModal({
           title: '您确定要支付吗',
           success: (res) => {
             if (res.confirm) {
               let params = {
-                address: '某地9',
-                bnbId: 2,
-                checkinAddress: 'abcdefg',
-                checkinName: 'abcdefg',
-                checkinPhone: 'abcdefg',
-                couponAmount: 10,
-                couponType: 1,
-                endPrice: 2,
-                openid: 'abcdefg',
-                orderAmount: 499,
-                orderStatus: 1,
-                orderType: 1,
-                payType: 1,
-                phone: 15658077858,
-                planDt: '2022/03/22',
-                plusAmount: 13,
-                productId: 3,
-                productPrice: 399,
-                quantity: 3,
-                reservationPrice: 10,
+                planDate: moment(this.selectDate).format('YYYY/MM/DD'),
+                productId: this.roomDetail.id,
+                roomId: this.packRoomList[this.fx].id,
+                submitFlag: 'Y',
+                name: this.name,
+                phone: this.phone,
               }
-              this.$api.home.checkinOrder(params).then((res) => {
+              if (this.payType !== '金米粒支付') {
+                params = {
+                  ...params,
+                  couponId: (this.couponIdList[0] || {}).id,
+                }
+              }
+              this.$api.home.validateCheckInOrder(params).then((res) => {
                 uni.showToast({ title: '购买成功～' })
                 setTimeout(() => {
                   uni.switchTab({

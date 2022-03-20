@@ -24,7 +24,7 @@
         class="card"
         v-for="item in dataList"
         :key="item.packId"
-        @click="gospecial(item.packId)"
+        @click="gospecial(item.packId, item.status, item.id)"
       >
         <view class="card-img">
           <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
@@ -32,7 +32,7 @@
         <view class="card-right">
           <view class="card-right-one">{{ item.mainTitle }}</view>
           <view v-if="item.status === 0" class="card-right-two yuyue">
-            已预约{{ item.sellAmt }}份
+            已预约{{ item.reservationAmt }}份
           </view>
           <view v-else class="card-right-two"> 已抢{{ item.sellAmt }}份 </view>
 
@@ -44,11 +44,15 @@
             <view
               v-if="item.status === 0"
               class="card-right-three-right yuyue"
-              @click.stop="goyuyue"
+              @click.stop="goyuyue(item)"
             >
               预约
             </view>
-            <view v-else-if="item.status === 1" class="card-right-three-right" @click.stop="toPay">
+            <view
+              v-else-if="item.status === 1"
+              class="card-right-three-right"
+              @click.stop="toPay(item.packId, item.id)"
+            >
               立即抢购
             </view>
             <view v-else-if="item.status === 2" class="card-right-three-right disable"> 售罄 </view>
@@ -114,20 +118,34 @@
       this.getDateList()
     },
     methods: {
-      toPay() {
+      toPay(id, activityId) {
         uni.navigateTo({
-          url: '../yuyue/yuyue',
+          url: `../yuyue/yuyue?id=${id}&activityId=${activityId}`,
         })
       },
-      goyuyue() {
+      goyuyue(item) {
         uni.showModal({
           title: '提示',
           confirmColor: '#00bbcc',
-          content: '是否花费20金米粒预约？',
+          content: `是否花费${item.price}金米粒预约？`,
           success: function (res) {
             if (res.confirm) {
-              uni.showToast({ title: '预约成功～' })
-            } else if (res.cancel) {
+              let params = {
+                bnbId: item.bnbId,
+                orderType: 0,
+                payType: 1,
+                productId: item.packId,
+                submitFlag: 'Y',
+                activityId: item.id,
+              }
+              this.$api.home.validateOrder(params).then((res = {}) => {
+                uni.showToast({ title: '预约成功～' })
+                setTimeout(() => {
+                  uni.switchTab({
+                    url: '/pages/orders/orders',
+                  })
+                }, 1500)
+              })
             }
           },
         })
@@ -172,9 +190,9 @@
         this.sortType = e.sortType
         this.getList(this.dateList[this.num])
       },
-      gospecial(id) {
+      gospecial(id, status, activityId) {
         uni.navigateTo({
-          url: `../special/special?id=${id}`,
+          url: `../special/special?id=${id}&status=${status}&activityId=${activityId}`,
         })
       },
       btn(index) {

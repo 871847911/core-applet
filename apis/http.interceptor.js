@@ -37,9 +37,9 @@ const install = (Vue, vm) => {
     // 返回成功
     if (res.statusCode == 200) {
       const result = res.data
-      if (result.code == 200) {
-        return result.result || result.data
-      } else if (result.code == 1011008) {
+      if (result.code == 200 || result.pageNo === 1) {
+        return result.result || result.data || result.rows
+      } else if (result.code === 1011008 || result.code == 1011006) {
         const token = uni.getStorageSync('TOKEN')
         vm.$u.toast(!token ? '未登录，正在跳转登录...' : '登陆已过期，请重新登录')
         getApp().globalData.logOut({ showToast: false })

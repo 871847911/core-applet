@@ -8,7 +8,7 @@
           </view>
           <view class="two"> 系统消息 </view>
         </view>
-        <view class="content-one-right"> 2022-01-02 15:33 </view>
+        <view class="content-one-right"></view>
       </view>
 
       <!-- <view class="content-one" @click="gologistics()">

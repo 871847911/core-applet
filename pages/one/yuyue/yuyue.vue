@@ -13,21 +13,29 @@
         </view>
       </view>
     </view>
-
+    <view class="information">
+      <view class="information-one">
+        <view class="information-one-left"> 房券数量 </view>
+        <u-number-box v-model="num" :min="1" :max="roomDetail.defaultStock"></u-number-box>
+      </view>
+    </view>
     <view class="information">
       <view class="information-title"> 购买信息 </view>
       <view class="information-one">
         <view class="information-one-left"> 购买人 </view>
-        <u-input placeholder="请填购买人姓名" v-model="form.name" />
+        <u-input placeholder="请填购买人姓名" v-model="userName" />
       </view>
       <view class="information-one">
         <view class="information-one-left"> 手机号 </view>
-        <u-input style="flex: 1" placeholder="用于接受通知，请填写真实号码" v-model="form.intro" />
+        <u-input style="flex: 1" placeholder="用于接受通知，请填写真实号码" v-model="phone" />
       </view>
     </view>
 
     <view class="footer">
-      <view class="footer-left"> <image src="/static/icon.png"></image><text>398</text></view>
+      <view class="footer-left">
+        <image src="/static/icon.png"></image
+        ><text>{{ Number(roomDetail.defaultPrice) * num }}</text></view
+      >
       <view class="footer-right" @tap="gosubmit()"> 提交订单 </view>
     </view>
   </view>
@@ -41,41 +49,46 @@
       return {
         BASE_API: BASE_API,
         phoneShow: false,
-        num: 0,
+        num: 1,
         roomDetail: {},
         packRoomList: {},
+        phone: '',
+        userName: '',
+        activityId: '',
       }
     },
     onLoad(option = {}) {
-      this.getRoomDetail(option.id)
+      this.activityId = option.activityId || ''
+      this.getRoomDetail(option.id, option.activityId)
     },
     methods: {
-      getRoomDetail(id) {
-        this.$api.home.packDetail({ packId: id }).then((res = {}) => {
+      getRoomDetail(id, activityId) {
+        let params = {
+          packId: id,
+        }
+        if (activityId) {
+          params = {
+            ...params,
+            activityId,
+          }
+        }
+        this.$api.home.packDetail(params).then((res = {}) => {
           this.roomDetail = res.packDetail || {}
           this.packRoomList = res.packRoomList || []
         })
       },
-      bind(index) {
-        this.num = index
-      },
       gosubmit() {
         let params = {
-          address: '',
-          bnbId: 2,
-          couponAmount: 10,
-          couponType: 1,
-          endPrice: 2,
-          orderAmount: 499,
+          bnbId: this.roomDetail.bnbId,
           orderType: 1,
           payType: 1,
-          phone: 15658077858,
-          productId: 3,
-          productPrice: 399,
-          quantity: 3,
-          reservationPrice: 10,
+          phone: this.phone,
+          productId: this.roomDetail.id,
+          quantity: this.num,
+          submitFlag: 'Y',
+          activityId: this.activityId,
         }
-        this.$api.home.mainPageOrder(params).then((res = {}) => {
+        this.$api.home.validateOrder(params).then((res = {}) => {
           uni.showToast({ title: '购买成功～' })
           setTimeout(() => {
             uni.switchTab({
@@ -83,6 +96,9 @@
             })
           }, 1500)
         })
+        // this.$api.home.mainPageOrder(params).then((res = {}) => {
+        //
+        // })
       },
     },
   }

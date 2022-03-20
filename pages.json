@@ -358,7 +358,7 @@
         {
           "path": "coupon/coupon",
           "style": {
-            "navigationBarTitleText": "优惠券",
+            "navigationBarTitleText": "房券",
             "enablePullDownRefresh": false
           }
         },

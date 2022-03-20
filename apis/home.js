@@ -47,7 +47,7 @@ export function facilities(params, ContentType) {
 }
 
 
-//优惠券下单
+//房券下单
 export function mainPageOrder(params, ContentType) {
   return vm.$u.get(`${BASE_API}/mainPage/order`, params, ContentType)
 }
@@ -81,6 +81,31 @@ export function refundAdd(params, ContentType) {
 export function makeRoomRate(params, ContentType) {
   return vm.$u.post(`${BASE_API}/sysUserExtend/makeRoomRate`, params, ContentType)
 }
+
+//订单
+export function queryOrder(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/checkInOrder/queryCheckInOrderList`, params, ContentType)
+}
+
+//订单
+export function validateOrder(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/mainPage/validateOrder`, params, ContentType)
+}
+
+//订单
+export function validateCheckInOrder(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/mainPage/validateCheckInOrder`, params, ContentType)
+}
+//订单
+export function queryCoupon(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/mainPage/queryCoupon`, params, ContentType)
+}
+
+//订单
+export function confirmCheckIn(params, ContentType) {
+  return vm.$u.post(`${BASE_API}/checkInOrder/confirmCheckIn`, params, ContentType)
+}
+
 
 
 
