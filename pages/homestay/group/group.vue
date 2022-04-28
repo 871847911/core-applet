@@ -60,7 +60,7 @@
       uni.setNavigationBarTitle({
         title: option.name || '房源套餐',
       })
-      this.category = option.id
+      this.category = option.id || ''
       this.getList(option.id)
     },
     methods: {
@@ -68,7 +68,16 @@
         this.getList()
       },
       getList(val) {
-        this.$api.home.queryPack({ word: this.keyword, category: this.category }).then((res) => {
+        let params = {
+          word: this.keyword,
+        }
+        if (val) {
+          params = {
+            ...params,
+            category: val,
+          }
+        }
+        this.$api.home.queryPack(params).then((res) => {
           this.list = res
         })
       },

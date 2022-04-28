@@ -128,7 +128,7 @@
           title: '提示',
           confirmColor: '#00bbcc',
           content: `是否花费${item.price}金米粒预约？`,
-          success: function (res) {
+          success: (res) => {
             if (res.confirm) {
               let params = {
                 bnbId: item.bnbId,

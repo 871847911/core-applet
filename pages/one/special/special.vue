@@ -76,7 +76,7 @@
       <!-- 进入店铺 -->
       <view class="shop">
         <view class="shop-img">
-          <image src="../../../static/images/house.png" mode=""></image>
+          <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
         </view>
         <view class="shop-title">
           <view class="shop-title-top"> {{ roomDetail.name }} </view>
@@ -161,14 +161,14 @@
       <!-- 订单必读 -->
       <view class="order">
         <view class="order-one"> 订单必读 </view>
-        <view class="order-two">
+        <!-- <view class="order-two">
           <view class="order-two-left">
             <image src="../../../static/images/编组%207@2x(1).png" mode=""></image>
           </view>
           <view class="order-two-right"> 入离时间 </view>
-        </view>
-        <view class="order-three"> 入住时间:14:00之后 入住时间:14:00之后 </view>
-        <view class="order-two">
+        </view> -->
+        <view class="order-three"> {{ roomDetail.orderMustRead }} </view>
+        <!-- <view class="order-two">
           <view class="order-two-left">
             <image src="../../../static/images/编组%207@2x(1).png" mode=""></image>
           </view>
@@ -178,7 +178,7 @@
         <view class="order-three"> 不接受18岁以下客人在无监护人陪同的情况家入住 </view>
         <view class="order-three">
           加床政策、儿童人数请参考所选的客房政策，若超过户型限制人数，可能需要收取额外费用。提出的任何请求均需要获得酒店的确认，所有服务以酒店告知为主。
-        </view>
+        </view> -->
       </view>
     </view>
     <view class="footer">
@@ -195,7 +195,7 @@
         <view class="footer-one-title"> 收藏 </view>
       </view> -->
       <!-- <view class="footer-two"> 加入我店 </view> -->
-      <view v-if="status === 0" class="footer-two" @click.stop="toPay"> 预约 </view>
+      <view v-if="status === 0" class="footer-two" @click.stop="yuyue"> 预约 </view>
       <view v-if="status === 1" class="footer-two" @click.stop="toPay"> 立即抢购 </view>
       <view v-if="status === 2" class="footer-two disabled"> 售罄 </view>
       <view v-if="status === 4" class="footer-two disabled"> 已结束 </view>
@@ -348,7 +348,8 @@
           .then((res = {}) => {
             this.roomDetail = res.packDetail || {}
             this.packRoomList = res.packRoomList || []
-            let facilitiesList = res.packDetail.facilities.split(',')
+            let facilitiesList =
+              (res.packDetail.facilities && res.packDetail.facilities.split(',')) || []
             this.$api.home.facilities().then((res = {}) => {
               this.facilities = (res.rows || []).filter((item) =>
                 facilitiesList.includes(`${item.id}`)
@@ -414,6 +415,29 @@
       goscenicspot() {
         uni.navigateTo({
           url: '../scenicspot/scenicspot',
+        })
+      },
+      yuyue() {
+        uni.showModal({
+          title: '提示',
+          confirmColor: '#00bbcc',
+          content: `是否花费${this.roomDetail.reservationPrice}金米粒预约？`,
+          success: (res) => {
+            if (res.confirm) {
+              let params = {
+                bnbId: this.roomDetail.bnbId,
+                orderType: 0,
+                payType: 1,
+                productId: this.roomDetail.packId,
+                submitFlag: 'Y',
+                activityId: this.activityId,
+              }
+              this.$api.home.validateOrder(params).then((res = {}) => {
+                uni.showToast({ title: '预约成功～' })
+                this.getRoomDetail(this.roomDetail.packId, this.activityId)
+              })
+            }
+          },
         })
       },
       // 跳转预约页面

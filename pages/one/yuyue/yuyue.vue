@@ -38,8 +38,7 @@
 
     <view class="footer">
       <view class="footer-left">
-        <image src="/static/icon.png"></image
-        ><text>{{ Number(roomDetail.defaultPrice) * num }}</text></view
+        <image src="/static/icon.png"></image><text>{{ Number(goldAmt) * num }}</text></view
       >
       <view class="footer-right" @tap="gosubmit()"> 提交订单 </view>
     </view>
@@ -60,6 +59,7 @@
         phone: '',
         userName: '',
         activityId: '',
+        goldAmt: 0,
       }
     },
     onLoad(option = {}) {
@@ -67,6 +67,20 @@
       this.getRoomDetail(option.id, option.activityId, option.activityFlag)
     },
     methods: {
+      getPrice() {
+        let params = {
+          bnbId: this.roomDetail.bnbId,
+          orderType: 1,
+          payType: 1,
+          phone: this.phone,
+          productId: this.roomDetail.id,
+          activityId: this.activityId,
+          quantity: this.num,
+        }
+        this.$api.home.validateOrder(params).then((res = {}) => {
+          this.goldAmt = res.goldAmt
+        })
+      },
       getRoomDetail(id, activityId, activityFlag) {
         let params = {
           packId: id,
@@ -86,6 +100,7 @@
         this.$api.home.packDetail(params).then((res = {}) => {
           this.roomDetail = res.packDetail || {}
           this.packRoomList = res.packRoomList || []
+          this.getPrice()
         })
       },
       gosubmit() {
@@ -105,9 +120,9 @@
                 payType: 1,
                 phone: this.phone,
                 productId: this.roomDetail.id,
-                quantity: this.num,
                 submitFlag: 'Y',
                 activityId: this.activityId,
+                quantity: this.num,
               }
               this.$api.home.validateOrder(params).then((res = {}) => {
                 uni.showToast({ title: '购买成功～' })

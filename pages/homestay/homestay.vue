@@ -1,11 +1,26 @@
 <template>
   <view class="warp">
     <view class="content">
-      <view class="swiper">
-        <u-swiper :list="list" height="320"></u-swiper>
+      <view class="vr" @click="goVr">
+        <image
+          :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.bnbInfo.picSite}`"
+          mode=""
+        ></image>
+        <view class="vr-btn" v-if="vrShow">
+          <image :src="`../../static/images/首页.png`" mode=""></image>
+        </view>
+        <view class="vr-vr">
+          <view class="vr-btn1" @click.stop="vrShow = !vrShow" :class="{ active: vrShow }">
+            VR
+          </view>
+          <view class="vr-btn2" @click.stop="vrShow = !vrShow" :class="{ active: !vrShow }">
+            图片
+          </view>
+          <!-- <view class="vr-btn3" v-if="!vrShow"> 1/1 </view> -->
+        </view>
       </view>
       <view class="list">
-        <view class="list-one" @click="godestination()">
+        <view class="list-one" @click="openLocation()">
           <view class="list-left">
             <image src="../../static/images/酒店位置@2x.png" mode=""></image>
           </view>
@@ -58,10 +73,16 @@
             @click="gohousedetails(item.id)"
             :key="item.id"
           >
-            <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`" mode=""></image>
+            <image
+              :src="`${BASE_API}/sysFileInfo/preview?id=${item.picSite}`"
+              mode="widthFix"
+            ></image>
             <view class="scenicspot-list-title">{{ item.mainTitle }}{{ item.viceTitle }}</view>
             <view class="scenicspot-list-money">
-              <text>{{ item.defaultPrice }}</text>
+              <view class="text1">
+                <image src="../../static/icon.png"></image>
+                <text>{{ item.defaultPrice }}</text>
+              </view>
             </view>
           </view>
         </view>
@@ -76,6 +97,7 @@
   export default {
     data() {
       return {
+        vrShow: true,
         title: 'Hello',
         roomDetail: {},
         list: [],
@@ -86,6 +108,26 @@
       this.getRoomDetail(option.id)
     },
     methods: {
+      openLocation() {
+        const latitude = this.roomDetail.lat && Number(this.roomDetail.lat)
+        const longitude = this.roomDetail.lng && Number(this.roomDetail.lng)
+        if (!latitude || !longitude) return uni.showToast({ title: '未设置地址', icon: 'none' })
+        wx.openLocation({
+          latitude,
+          longitude,
+          scale: 18,
+          success: (record) => {},
+          fail: (record) => {
+            console.log(record)
+          },
+        })
+      },
+      goVr() {
+        uni.setStorageSync('WEBVIEW_URL', this.roomDetail.bnbInfo.vr)
+        uni.navigateTo({
+          url: '/pages/one/picture/picture',
+        })
+      },
       gohousedetails(id) {
         uni.navigateTo({
           url: `../one/roomorder/roomorder?id=${id}`,
@@ -137,8 +179,15 @@
 </script>
 
 <style lang="scss" scoped>
+  .active {
+    background-color: #ff4d00 !important;
+    color: #fff;
+  }
+  page {
+    background-color: #f5f5f5;
+  }
   .warp {
-    height: 100vh;
+    // height: 100vh;
     background-color: #f5f5f5;
   }
   .search {
@@ -148,6 +197,61 @@
   }
   .content {
     padding: 20rpx 32rpx;
+    .vr {
+      width: 750rpx;
+      height: 536rpx;
+      position: relative;
+      overflow: hidden;
+      image {
+        height: 597rpx;
+        width: 750rpx;
+      }
+      .vr-btn {
+        position: absolute;
+        top: 266rpx;
+        left: 315rpx;
+        image {
+          width: 120rpx;
+          height: 120rpx;
+        }
+      }
+      .vr-vr {
+        position: absolute;
+        top: 476rpx;
+        left: 294rpx;
+        display: flex;
+        .vr-btn1 {
+          width: 70rpx;
+          height: 40rpx;
+          background-color: rgba(255, 255, 255, 0.6);
+          line-height: 40rpx;
+          text-align: center;
+          font-size: 22rpx;
+          border-radius: 20rpx;
+          margin-right: 10rpx;
+        }
+        .vr-btn2 {
+          width: 84rpx;
+          height: 40rpx;
+          background-color: rgba(255, 255, 255, 0.6);
+          line-height: 40rpx;
+          text-align: center;
+          font-size: 22rpx;
+          border-radius: 20rpx;
+          margin-right: 185rpx;
+        }
+        .vr-btn3 {
+          width: 74rpx;
+          height: 40rpx;
+          background: rgba(0, 0, 0, 0.4);
+          border-radius: 20px;
+          text-align: center;
+          font-size: 22rpx;
+          color: #fff;
+          line-height: 40rpx;
+        }
+      }
+    }
     .swiper {
       background-color: #fff;
     }
@@ -232,17 +336,17 @@
       }
 
       .scenicspot-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        // display: flex;
+        // flex-wrap: wrap;
+        // justify-content: space-between;
         .scenicspot-list-image {
-          width: 332rpx;
           background-color: #fff;
           margin-bottom: 20rpx;
           border-radius: 10rpx;
           image {
-            width: 332rpx;
-            height: 280rpx;
+            width: 100%;
+            // width: 332rpx;
+            // height: 280rpx;
           }
           .scenicspot-list-title {
             padding: 20rpx;
@@ -253,9 +357,17 @@
             color: #ff2d19;
             font-size: 26rpx;
             padding: 0 0 20rpx 20rpx;
-            text {
+            .text1 {
               font-size: 32rpx;
               font-weight: 700;
+              color: #ff2d19;
+              display: flex;
+              align-items: center;
+              image {
+                width: 42rpx;
+                height: 42rpx;
+                margin-right: 8rpx;
+              }
             }
           }
         }

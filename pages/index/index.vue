@@ -18,7 +18,7 @@
         <u-swiper :list="bannerList" height="360"></u-swiper>
       </view>
       <view v-if="packCategoryList.length > 0" class="content-list">
-        <view class="content-list-one" @tap="gogroup(1)">
+        <view class="content-list-one" @tap="gogroup()">
           <view class="content-list-top">
             <image src="../../static/images/酒店位置.png" mode=""></image>
           </view>
@@ -243,7 +243,7 @@
       // 去往团建民宿
       gogroup(id, name) {
         uni.navigateTo({
-          url: `../homestay/group/group?id=${id}&name=${name}`,
+          url: `../homestay/group/group?id=${id || ''}&name=${name || '房源套餐'}`,
         })
       },
       // 去往亲子页面

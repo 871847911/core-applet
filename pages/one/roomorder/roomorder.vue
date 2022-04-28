@@ -12,8 +12,10 @@
         <image :src="`../../../static/images/首页.png`" mode=""></image>
       </view>
       <view class="vr-vr">
-        <view class="vr-btn1" @click="vrShow = !vrShow" :class="{ active: vrShow }"> VR </view>
-        <view class="vr-btn2" @click="vrShow = !vrShow" :class="{ active: !vrShow }"> 图片 </view>
+        <view class="vr-btn1" @click.stop="vrShow = !vrShow" :class="{ active: vrShow }"> VR </view>
+        <view class="vr-btn2" @click.stop="vrShow = !vrShow" :class="{ active: !vrShow }">
+          图片
+        </view>
         <view class="vr-btn3" v-if="!vrShow"> 1/1 </view>
       </view>
     </view>
@@ -125,7 +127,7 @@
       <!-- 进入店铺 -->
       <view class="shop">
         <view class="shop-img">
-          <image src="../../../static/images/house.png" mode=""></image>
+          <image :src="`${BASE_API}/sysFileInfo/preview?id=${roomDetail.picId}`" mode=""></image>
         </view>
         <view class="shop-title">
           <view class="shop-title-top"> {{ roomDetail.name }} </view>
@@ -210,14 +212,14 @@
       <!-- 订单必读 -->
       <view class="order">
         <view class="order-one"> 订单必读 </view>
-        <view class="order-two">
+        <!-- <view class="order-two">
           <view class="order-two-left">
             <image src="../../../static/images/编组%207@2x(1).png" mode=""></image>
           </view>
           <view class="order-two-right"> 入离时间 </view>
-        </view>
-        <view class="order-three"> 入住时间:14:00之后 入住时间:14:00之后 </view>
-        <view class="order-two">
+        </view> -->
+        <view class="order-three"> {{ roomDetail.orderMustRead }} </view>
+        <!-- <view class="order-two">
           <view class="order-two-left">
             <image src="../../../static/images/编组%207@2x(1).png" mode=""></image>
           </view>
@@ -227,7 +229,7 @@
         <view class="order-three"> 不接受18岁以下客人在无监护人陪同的情况家入住 </view>
         <view class="order-three">
           加床政策、儿童人数请参考所选的客房政策，若超过户型限制人数，可能需要收取额外费用。提出的任何请求均需要获得酒店的确认，所有服务以酒店告知为主。
-        </view>
+        </view> -->
       </view>
     </view>
     <view class="footer">
@@ -457,7 +459,6 @@
         })
       },
       openLocation() {
-        console.log(123123123, this.roomDetail.lat, this.roomDetail.lng)
         const latitude = this.roomDetail.lat && Number(this.roomDetail.lat)
         const longitude = this.roomDetail.lng && Number(this.roomDetail.lng)
         if (!latitude || !longitude) return uni.showToast({ title: '未设置地址', icon: 'none' })

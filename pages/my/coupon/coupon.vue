@@ -48,10 +48,10 @@
       }
     },
     methods: {
-      toBuy() {
+      toBuy(item) {
         if (this.num != 0) return
         uni.navigateTo({
-          url: `/pages/one/roomorder/roomorder?id=${3}`,
+          url: `/pages/one/roomorder/roomorder?id=${item.packId}`,
         })
       },
       changeNum(n) {
