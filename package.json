@@ -41,7 +41,7 @@
         "env": {
           "UNI_PLATFORM": "mp-weixin",
           "BASE_API_URL": {
-            "BASE_API": "http://suvcf.com:82"
+            "BASE_API": "https://suvcf.com/api"
           }
         },
         "define": {

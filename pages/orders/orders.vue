@@ -32,18 +32,27 @@
       <!-- 全部订单 -->
       <view class="one" v-if="list && list.length > 0">
         <view class="list" v-for="item in list" :key="item.order_id">
-          <view class="list-one">
+          <view @click="goDetails(item)" class="list-one">
             <!-- <view class="list-one-left"> 2021/03/13至2021/03/14 1天1晚 </view> -->
             <view class="list-one-left"> 订单号：{{ item.order_id }} </view>
-            <view class="list-one-right"> {{ status[item.order_status] }} </view>
+            <view v-if="item.order_type === 2" class="list-one-right">
+              {{ status[item.order_status] }}
+            </view>
+            <view v-else class="list-one-right">
+              {{ yStatus[item.order_status] }}
+            </view>
           </view>
-          <view class="cards" @click="gopending()">
+          <view @click="goDetails(item)" class="cards">
             <view class="card-left">
-              <image src="../../static/images/house.png" mode=""></image>
+              <image :src="`${BASE_API}/sysFileInfo/preview?id=${item.pic_id}`" mode=""></image>
             </view>
             <view class="card-right">
-              <view class="card-right-one">{{ item.mainTitle }} </view>
-              <view class="card-right-two"> {{ item.room_name }} </view>
+              <view class="card-right-one"
+                >{{ item.main_title }}
+                <text v-if="item.order_type === 0">预约</text>
+                <text v-if="item.order_type === 1">房券</text>
+              </view>
+              <view v-if="item.room_name" class="card-right-two"> {{ item.room_name }} </view>
 
               <view class="card-right-four">
                 <image src="/static/icon.png"></image>
@@ -53,14 +62,48 @@
           </view>
           <view v-if="item.order_type === 2" class="list-four">
             <view
-              v-if="item.order_status === 2"
-              @click="queren(item.order_id)"
+              v-if="item.order_status === 2 && num === 1"
+              @click.stop="ruzhu(item.id)"
               class="list-four-left"
             >
               确认入住
             </view>
-            <view v-if="item.order_status === 3" class="list-four-left"> 确认退房 </view>
-            <view class="list-four-right" @click="tunquan(item.product_id)"> 我要屯券 </view>
+            <view
+              v-if="item.order_status === 0 && num === 1"
+              @click.stop="queren(item.id)"
+              class="list-four-left"
+            >
+              确认有房
+            </view>
+            <view
+              v-if="item.order_status === 0 && num === 1"
+              @click.stop="judan(item.id)"
+              class="list-four-left"
+            >
+              拒单
+            </view>
+            <view
+              v-if="[0].includes(item.order_status) && num === 0"
+              @click.stop="tuikuan(item)"
+              class="list-four-left"
+            >
+              申请退款
+            </view>
+            <view
+              v-if="[6].includes(item.order_status) && num === 0"
+              @click.stop="quxiaosq(item.id)"
+              class="list-four-left"
+            >
+              取消申请
+            </view>
+            <view
+              v-if="item.order_status === 3"
+              @click.stop="confirmCheckOut(item.id)"
+              class="list-four-left"
+            >
+              确认离店
+            </view>
+            <view class="list-four-right" @click.stop="tunquan(item.product_id)"> 我要囤券 </view>
           </view>
         </view>
         <!-- <view class="list">
@@ -199,17 +242,41 @@
       </view>
       <mescroll-empty v-else :option="emptyOption"></mescroll-empty>
     </view>
+    <u-modal
+      v-model="modalShow"
+      title="退款原因"
+      confirm-color="#00bbcc"
+      show-cancel-button
+      @confirm="tuikuanConfirm"
+      @cancel="tuikuanCancel"
+    >
+      <view :style="{ padding: '20rpx' }" class="slot-content">
+        <u-input
+          v-model="tuikaunyy"
+          border
+          :placeholder-style="'color: #c0c4cc'"
+          type="textarea"
+          placeholder=" "
+        />
+      </view>
+    </u-modal>
   </view>
 </template>
 
 <script>
   import { mapState } from 'vuex'
+  import config from '@/common/config.js'
+  const { BASE_API } = config
   export default {
     data() {
       return {
+        tuikaunyy: '',
+        BASE_API: BASE_API,
         num: 0, //一级选项
         tabIndex: 0, //二级选项
         tabShow: true, //二级菜单是否显示
+        modalShow: false,
+        checkedId: {},
         onelist: [
           {
             name: '房源采购',
@@ -249,7 +316,26 @@
           },
         ],
         list: [],
-        status: ['已支付', '已使用', '待入住', '已入住', '已离店', '已预约'],
+        yStatus: [
+          '已支付',
+          '已使用',
+          '待入住',
+          '已入住',
+          '已离店',
+          '已预约',
+          '申请退款中',
+          '已退款',
+        ],
+        status: [
+          '待确认',
+          '已使用',
+          '待入住',
+          '已入住',
+          '已离店',
+          '已预约',
+          '申请退款中',
+          '已退款',
+        ],
         emptyOption: {
           tip: '暂无数据', // 提示
           btnText: '',
@@ -269,31 +355,132 @@
       }
     },
     methods: {
+      quxiaosq(orderId) {
+        uni.showModal({
+          title: '提示',
+          content: '确定取消退款申请？',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            if (res.confirm) {
+              this.$api.home.cancelApplyRefund({ id: orderId }).then((res = []) => {
+                uni.showToast({ title: '操作成功～' })
+                this.getData()
+              })
+            }
+          },
+        })
+      },
+      tuikuanConfirm() {
+        if (!this.tuikaunyy) return uni.showToast({ title: '退款原因不能为空', icon: 'none' })
+        this.$api.home
+          .orderRefundInfoAdd({
+            id: this.checkedId.id,
+            refundReason: this.tuikaunyy,
+          })
+          .then((res = []) => {
+            uni.showToast({ title: '操作成功～' })
+            this.getData()
+          })
+      },
+      tuikuanCancel() {
+        this.tuikaunyy = ''
+        this.checkedId = ''
+      },
+      tuikuan(id) {
+        this.tuikaunyy = ''
+        this.checkedId = id || {}
+        this.modalShow = true
+      },
+      judan(orderId) {
+        uni.showModal({
+          title: '提示',
+          content: '是否拒绝此订单？',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            if (res.confirm) {
+              this.$api.home.refuseCheckIn({ id: orderId }).then((res = []) => {
+                uni.showToast({ title: '操作成功～' })
+                this.getData()
+              })
+            }
+          },
+        })
+      },
+      ruzhu(orderId) {
+        uni.showModal({
+          title: '提示',
+          content: '是否确认客户已入住？',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            if (res.confirm) {
+              this.$api.home.checkInOrderCheckIn({ id: orderId }).then((res = []) => {
+                uni.showToast({ title: '操作成功～' })
+                this.getData()
+              })
+            }
+          },
+        })
+      },
+      confirmCheckOut(orderId) {
+        uni.showModal({
+          title: '提示',
+          content: '是否确认客户已离店？',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            if (res.confirm) {
+              this.$api.home.confirmCheckOut({ id: orderId }).then((res = []) => {
+                uni.showToast({ title: '操作成功～' })
+                this.getData()
+              })
+            }
+          },
+        })
+      },
+      goDetails(item) {
+        // if (item.order_type != 2) return
+        uni.setStorageSync('ORDER_DETAILS', { ...item, num: this.num })
+        uni.navigateTo({
+          url: `/pages/orders/orderDetails`,
+        })
+      },
       tunquan(id) {
         uni.navigateTo({
           url: `/pages/one/yuyue/yuyue?id=${id}`,
         })
       },
       queren(orderId) {
-        this.$api.home.confirmCheckIn({ orderId }).then((res = []) => {
-          uni.showToast({ title: '操作成功～' })
-          this.getData()
+        uni.showModal({
+          title: '提示',
+          content: '是否确认有房？',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            if (res.confirm) {
+              this.$api.home.confirmCheckIn({ id: orderId }).then((res = []) => {
+                uni.showToast({ title: '操作成功～' })
+                this.getData()
+              })
+            }
+          },
         })
       },
       getData() {
         let params = {
           orderStatus: this.tabIndex - 1 < 0 ? '' : this.tabIndex - 1,
+          pageSize: 100,
         }
         if (this.num === 1) {
           params = {
             ...params,
             proprietorId: this.USERINFO.id,
           }
+          this.$api.home.queryOrder(params).then((res = {}) => {
+            this.list = res.rows || []
+          })
+        } else {
+          this.$api.home.queryOrderGeneralList(params).then((res = {}) => {
+            this.list = res.rows || []
+          })
         }
-        this.$api.home.queryOrder(params).then((res = []) => {
-          console.log(res)
-          this.list = res || []
-        })
       },
       toggleTabone(index) {
         this.num = index
@@ -414,6 +601,11 @@
             .card-right-one {
               font-size: 28rpx;
               color: #333;
+              text {
+                background: rgba(255, 45, 25, 0.2);
+                border-radius: 4rpx;
+                margin-left: 10rpx;
+              }
             }
             .card-right-two {
               font-size: 24rpx;

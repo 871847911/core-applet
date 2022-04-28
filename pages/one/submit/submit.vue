@@ -19,7 +19,7 @@
             </view>
             <view class="card-right-four">
               <image src="/static/icon.png"></image>
-              <text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text>
+              <text>{{ payDetails.originalAmt }}</text>
             </view>
           </view>
         </view>
@@ -39,7 +39,12 @@
           </view>
           <view class="information-one">
             <view class="information-one-left"> 手机号 </view>
-            <u-input style="flex: 1" placeholder="用于接受通知，请填写真实号码" v-model="phone" />
+            <u-input
+              style="flex: 1"
+              maxlength="11"
+              placeholder="用于接受通知，请填写真实号码"
+              v-model="phone"
+            />
           </view>
           <view class="information-one">
             <view class="information-one-left"> 预计到店 </view>
@@ -55,31 +60,32 @@
             <view class="information-two">
               <view class=""> 在线支付 </view>
               <view class="flex_a"
-                ><image src="/static/icon.png"></image
-                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+                ><image src="/static/icon.png"></image><text>{{ payDetails.payAmt }}</text></view
               >
             </view>
             <view class="information-two">
               <view class=""> 原价 </view>
               <view class="flex_a"
                 ><image src="/static/icon.png"></image
-                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+                ><text>{{ payDetails.originalAmt }}</text></view
               >
             </view>
             <view class="information-two">
-              <view class=""> 预约金米粒抵扣 </view>
+              <view class="">房券抵扣 </view>
               <view class="flex_a"
                 ><image src="/static/icon.png"></image
-                ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+                ><text>{{
+                  (payDetails.couponDetail && payDetails.couponDetail.amount) || 0
+                }}</text></view
               >
             </view>
-            <view class="information-two">
+            <!-- <view class="information-two">
               <view class=""> 膨胀金抵扣 </view>
               <view class="flex_a"
                 ><image src="/static/icon.png"></image
                 ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
               >
-            </view>
+            </view> -->
           </view>
         </u-popup>
         <!-- 发票 -->
@@ -90,15 +96,18 @@
         <!-- 支付方式 -->
         <view class="mode">
           <view class="mode-title"> 支付方式 </view>
-          <u-radio-group active-color="#ff7919" v-model="payType" @change="radioGroupChange">
+          <u-radio-group active-color="#ff7919" v-model="payType" @change="payTypeChange">
             <u-radio
-              @change="radioChange"
-              v-for="(item, index) in payTypelist"
-              :key="index"
+              :disabled="item.disabled"
+              :key="item.name"
+              v-for="item in payTypelist"
               :name="item.name"
             >
               {{ item.name }}
             </u-radio>
+            <!-- <u-radio :disabled="!couponIdList.length" :name="'房券抵扣'">
+              房券抵扣{{ !couponIdList.length }}
+            </u-radio> -->
           </u-radio-group>
         </view>
         <!-- 下单说明 -->
@@ -116,8 +125,7 @@
       <!-- 选择到店时间 -->
       <view class="footer">
         <view class="footer-left"
-          ><image src="/static/icon.png"></image
-          ><text>{{ roomDetail.defaultPrice + packRoomList[fx].addPrice }}</text></view
+          ><image src="/static/icon.png"></image><text>{{ payDetails.payAmt }}</text></view
         >
         <view class="footer-one" @click="phoneShow = true">
           明细<image src="../../../static/images/立即抢购@2x.png" mode=""></image>
@@ -142,9 +150,11 @@
         payTypelist: [
           {
             name: '金米粒支付',
+            disabled: false,
           },
           {
             name: '房券抵扣',
+            disabled: true,
           },
         ],
         fx: 0,
@@ -176,6 +186,7 @@
         remark: '',
         adTime: '',
         couponIdList: [],
+        payDetails: {},
       }
     },
     onLoad(option = {}) {
@@ -184,8 +195,13 @@
       this.selectDate = option.selectDate
     },
     methods: {
-      radioGroupChange(e) {
+      payTypeChange(e) {
         console.log(e)
+        if (e === '房券抵扣') {
+          this.getPrice((this.couponIdList[0] || {}).id)
+        } else {
+          this.getPrice()
+        }
       },
       radioChange(e) {
         console.log(e)
@@ -204,13 +220,21 @@
           })
         })
       },
-      getPrice() {
+      getPrice(couponId) {
         let params = {
           planDate: moment(this.selectDate).format('YYYY/MM/DD'),
           productId: this.roomDetail.id,
           roomId: this.packRoomList[this.fx].id,
         }
-        this.$api.home.validateCheckInOrder(params).then((res = {}) => {})
+        if (couponId) {
+          params = {
+            ...params,
+            couponId,
+          }
+        }
+        this.$api.home.validateCheckInOrder(params).then((res = {}) => {
+          this.payDetails = res
+        })
       },
       getFq() {
         let params = {
@@ -218,13 +242,28 @@
           status: 0,
         }
         this.$api.home.queryCoupon(params).then((res = {}) => {
-          this.couponIdList = res.couponDetailList
-          console.log(res, '123123123123')
+          this.couponIdList = res.couponDetailList || []
+          if (res.couponDetailList && res.couponDetailList.length > 0) {
+            this.payTypelist = [
+              {
+                name: '金米粒支付',
+                disabled: false,
+              },
+              {
+                name: '房券抵扣',
+                disabled: false,
+              },
+            ]
+          }
         })
       },
       goresults() {
         if (!this.name || !this.phone)
           return uni.showToast({ title: '请填写入住信息', mask: true, icon: 'none' })
+        var myreg = /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/
+        if (!myreg.test(this.phone)) {
+          return uni.showToast({ title: '请填写正确的手机号码', icon: 'none' })
+        }
         uni.showModal({
           title: '您确定要支付吗',
           success: (res) => {
@@ -250,12 +289,6 @@
                     url: '/pages/orders/orders',
                   })
                 }, 1500)
-              })
-            } else if (res.cancel) {
-              console.log('用户点击取消')
-              uni.navigateTo({
-                //跳转页面
-                url: '../resultsfail/resultsfail',
               })
             }
           },

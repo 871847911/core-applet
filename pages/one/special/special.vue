@@ -13,19 +13,19 @@
         <view class="address-money">
           <view class="address-money-left">
             <image src="/static/icon.png"></image>
-            <text>{{ roomDetail.defaultPrice + packRoomList[selectfx].addPrice }}</text>
+            <text>{{ roomDetail.originalPrice }}</text>
           </view>
-          <view class="" style="width: 32rpx; height: 32rpx">
+          <!-- <view class="" style="width: 32rpx; height: 32rpx">
             <image
               style="width: 32rpx; height: 32rpx"
               src="../../../static/images/收藏@2x%20-%20万能看图王.png"
               mode=""
             ></image>
             <view class="" style="font-size: 16rpx; color: #333"> 收藏 </view>
-          </view>
+          </view> -->
         </view>
         <view class="address-title">{{ roomDetail.mainTitle }}{{ roomDetail.viceTitle }}</view>
-        <view class="address-title-one">{{ roomDetail.description }}</view>
+        <view class="address-title-one">{{ roomDetail.description || '' }}</view>
 
         <view class="address-time">
           <view class="address-time-left"> 在线预约不可退 </view>
@@ -80,7 +80,7 @@
         </view>
         <view class="shop-title">
           <view class="shop-title-top"> {{ roomDetail.name }} </view>
-          <view class="shop-title-bottom"> {{ roomDetail.bnbDescription }} </view>
+          <view class="shop-title-bottom"> {{ roomDetail.bnbDescription || '' }} </view>
         </view>
         <view class="shop-btn" @click="goDetail"> 进入民宿 </view>
       </view>
@@ -318,7 +318,7 @@
     methods: {
       toPay() {
         uni.navigateTo({
-          url: `../yuyue/yuyue?id=${this.roomDetail.id}&activityId=${this.activityId}`,
+          url: `../yuyue/yuyue?id=${this.roomDetail.packId}&activityId=${this.activityId}&activityFlag=Y`,
         })
       },
       //计算未来几天价格
@@ -343,17 +343,19 @@
         })
       },
       getRoomDetail(id, activityId) {
-        this.$api.home.packDetail({ packId: id, activityId }).then((res = {}) => {
-          this.roomDetail = res.packDetail || {}
-          this.packRoomList = res.packRoomList || []
-          let facilitiesList = res.packDetail.facilities.split(',')
-          this.$api.home.facilities().then((res = {}) => {
-            this.facilities = (res.rows || []).filter((item) =>
-              facilitiesList.includes(`${item.id}`)
-            )
-            console.log(this.facilities)
+        this.$api.home
+          .packDetail({ packId: id, activityId, activityFlag: 'Y' })
+          .then((res = {}) => {
+            this.roomDetail = res.packDetail || {}
+            this.packRoomList = res.packRoomList || []
+            let facilitiesList = res.packDetail.facilities.split(',')
+            this.$api.home.facilities().then((res = {}) => {
+              this.facilities = (res.rows || []).filter((item) =>
+                facilitiesList.includes(`${item.id}`)
+              )
+              console.log(this.facilities)
+            })
           })
-        })
       },
       confirm(e) {
         console.log(e)

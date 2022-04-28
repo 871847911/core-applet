@@ -26,14 +26,14 @@
             <image src="/static/icon.png"></image>
             <text>{{ roomDetail.defaultPrice + packRoomList[selectfx].addPrice }}</text>
           </view>
-          <view class="" style="width: 32rpx; height: 32rpx">
+          <!-- <view class="" style="width: 32rpx; height: 32rpx">
             <image
               style="width: 32rpx; height: 32rpx"
               src="../../../static/images/收藏@2x%20-%20万能看图王.png"
               mode=""
             ></image>
             <view class="" style="font-size: 16rpx; color: #333"> 收藏 </view>
-          </view>
+          </view> -->
         </view>
         <view class="address-title">{{ roomDetail.mainTitle }}</view>
         <view class="address-title">{{ roomDetail.viceTitle }}</view>
@@ -56,9 +56,7 @@
         >
           <view class="date-one"> {{ item.date }} </view>
           <view class="date-two"> {{ item.title }} </view>
-          <view class="date-three">
-            {{ roomDetail.defaultPrice + packRoomList[selectfx].addPrice }}起
-          </view>
+          <view class="date-three"> {{ item.price + packRoomList[selectfx].addPrice }}起 </view>
         </view>
         <view class="date-title-one" @click="calendarShow = true">
           <view class="date-title-one-top"> 查看更多 可订日期 </view>
@@ -98,8 +96,8 @@
           <view class="map-one">
             <image src="../../../static/images/距离@2x.png" mode=""></image>
           </view>
-          <view class="map-two"
-            >{{ roomDetail.province }}{{ roomDetail.city }}{{ roomDetail.description
+          <view class="map-two" @click="getSetting"
+            >{{ roomDetail.province }}{{ roomDetail.city }}{{ roomDetail.district
             }}{{ roomDetail.address }}</view
           >
           <view class="map-four"> </view>
@@ -131,7 +129,7 @@
         </view>
         <view class="shop-title">
           <view class="shop-title-top"> {{ roomDetail.name }} </view>
-          <view class="shop-title-bottom"> {{ roomDetail.bnbDescription }} </view>
+          <view class="shop-title-bottom"> {{ roomDetail.bnbDescription || '暂无介绍' }} </view>
         </view>
         <view class="shop-btn" @click="goDetail"> 进入民宿 </view>
       </view>
@@ -247,7 +245,7 @@
       </view> -->
       <!-- <view class="footer-two"> 加入我店 </view> -->
       <view class="footer-two" @tap="gosubmit"> 立即预订 </view>
-      <view class="footer-three" @tap="goyuyue"> 屯券 </view>
+      <view class="footer-three" @tap="goyuyue"> 囤券 </view>
     </view>
     <!-- 分享弹窗 -->
     <u-popup v-model="shareShow" mode="bottom" height="300" :closeable="true">
@@ -336,35 +334,143 @@
         dateList: [],
         datePriceList: [],
         selectDate: '',
+        priceObj: {},
+        packId: '',
       }
     },
     onLoad(option = {}) {
+      this.packId = option.id
       this.getRoomDetail(option.id)
-      let list = []
-      const start = moment().format('x')
-      const end = moment().endOf('day').format('x')
-      this.timestamp = (end - start) / 1000
-      var week = ['一', '二', '三', '四', '五', '六', '日']
-      for (var i = 0; i < 3; i++) {
-        const index = moment()
-          .subtract(0 - i, 'days')
-          .day()
-        console.log(index)
-        let data = {
-          title: '星期' + index==0?week[6]:week[index - 1],
-          date: moment()
-            .subtract(0 - i, 'days')
-            .format('MM/DD'),
-          value: moment()
-            .subtract(0 - i, 'days')
-            .format('YYYY-MM-DD'),
-        }
-        list.push(data)
-      }
-      this.dateList = list
-      console.log(list)
     },
     methods: {
+      getPackPrices(id, date) {
+        const params = {
+          interval: 10,
+          packId: id,
+          planDt: date,
+        }
+        this.$api.home.getPackPrices(params).then((res = {}) => {
+          const alist = res.priceMap || []
+          let priceObj = {}
+          alist.forEach((c) => {
+            priceObj = {
+              ...priceObj,
+              ...c,
+            }
+          })
+          this.priceObj = priceObj
+          let list = []
+          var week = ['一', '二', '三', '四', '五', '六', '日']
+          for (var i = 0; i < 3; i++) {
+            const index = moment(date)
+              .subtract(0 - i, 'days')
+              .day()
+            let data = {
+              title: '星期' + (index == 0 ? week[6] : week[index]),
+              date: moment(date)
+                .subtract(0 - i, 'days')
+                .format('MM/DD'),
+              value: moment(date)
+                .subtract(0 - i, 'days')
+                .format('YYYY-MM-DD'),
+              price:
+                this.priceObj[
+                  `${moment(date)
+                    .subtract(0 - i, 'days')
+                    .format('YYYY/MM/DD')}`
+                ],
+            }
+            list.push(data)
+          }
+          this.dateList = list
+          this.datePriceList = []
+          for (var i = 0; i < 10; i++) {
+            let data = {
+              date: moment(date)
+                .subtract(0 - i, 'days')
+                .format('YYYY/MM/DD'),
+              price:
+                this.priceObj[
+                  `${moment(date)
+                    .subtract(0 - i, 'days')
+                    .format('YYYY/MM/DD')}`
+                ] +
+                ((this.packRoomList[this.selectfx] && this.packRoomList[this.selectfx].addPrice) ||
+                  0),
+            }
+            this.datePriceList.push(data)
+          }
+        })
+      },
+      getSetting() {
+        uni.getSetting({
+          success: (res) => {
+            const recordAuth = res.authSetting['scope.userLocation']
+            if (recordAuth === false) {
+              //已申请过授权，但是用户拒绝
+              uni.showModal({
+                title: '提示',
+                content: '检测到您没打开地图功能权限，是否去设置打开？',
+                confirmText: '确认',
+                cancelText: '取消',
+                success: function (res) {
+                  if (res.confirm) {
+                    uni.openSetting({
+                      success: function (res) {
+                        const recordAuth = res.authSetting['scope.userLocation']
+                        if (recordAuth === true) {
+                          uni.showToast({
+                            title: '授权成功',
+                            icon: 'success',
+                          })
+                        }
+                      },
+                    })
+                  } else if (res.cancel) {
+                    console.log('用户点击取消')
+                  }
+                },
+              })
+            } else if (recordAuth === true) {
+              // 用户已经同意授权
+              this.openLocation()
+            } else {
+              // 第一次进来，未发起授权
+              uni.authorize({
+                scope: 'scope.userLocation',
+                success: () => {
+                  //授权成功
+                  uni.showToast({
+                    title: '授权成功',
+                    icon: 'success',
+                  })
+                },
+              })
+            }
+          },
+          fail: function () {
+            uni.showToast({
+              title: '鉴权失败，请重试',
+              icon: 'none',
+            })
+          },
+        })
+      },
+      openLocation() {
+        console.log(123123123, this.roomDetail.lat, this.roomDetail.lng)
+        const latitude = this.roomDetail.lat && Number(this.roomDetail.lat)
+        const longitude = this.roomDetail.lng && Number(this.roomDetail.lng)
+        if (!latitude || !longitude) return uni.showToast({ title: '未设置地址', icon: 'none' })
+        wx.openLocation({
+          latitude,
+          longitude,
+          scale: 18,
+          success: (record) => {},
+          fail: (record) => {
+            console.log(record)
+          },
+        })
+      },
       goVr() {
         uni.setStorageSync('WEBVIEW_URL', this.roomDetail.vr)
         uni.navigateTo({
@@ -373,19 +479,7 @@
       },
       //计算未来几天价格
       getDatePrice(day) {
-        this.datePriceList = []
-        for (var i = 0; i < 10; i++) {
-          let data = {
-            date: moment(day)
-              .subtract(0 - i, 'days')
-              .format('YYYY/MM/DD'),
-            price:
-              this.roomDetail.defaultPrice +
-              ((this.packRoomList[this.selectfx] && this.packRoomList[this.selectfx].addPrice) ||
-                0),
-          }
-          this.datePriceList.push(data)
-        }
+        this.getPackPrices(this.packId, moment(day).format('YYYY/MM/DD'))
       },
       handleClick(index) {
         this.selectfx = index
@@ -411,6 +505,42 @@
       },
       confirm(e) {
         console.log(e)
+        // let list = []
+        // var week = ['一', '二', '三', '四', '五', '六', '日']
+        // for (var i = 0; i < 3; i++) {
+        //   const index = moment(e.startStr.dateStr)
+        //     .subtract(0 - i, 'days')
+        //     .day()
+        //   console.log(
+        //     this.priceObj,
+        //     `${moment(e.startStr.dateStr)
+        //       .subtract(0 - i, 'days')
+        //       .format('YYYY/MM/DD')}`,
+        //     this.priceObj[
+        //       `${moment(e.startStr.dateStr)
+        //         .subtract(0 - i, 'days')
+        //         .format('YYYY/MM/DD')}`
+        //     ]
+        //   )
+        //   let data = {
+        //     title: '星期' + (index == 0 ? week[6] : week[index]),
+        //     date: moment(e.startStr.dateStr)
+        //       .subtract(0 - i, 'days')
+        //       .format('MM/DD'),
+        //     value: moment(e.startStr.dateStr)
+        //       .subtract(0 - i, 'days')
+        //       .format('YYYY-MM-DD'),
+        //     price:
+        //       this.priceObj[
+        //         `${moment(e.startStr.dateStr)
+        //           .subtract(0 - i, 'days')
+        //           .format('YYYY/MM/DD')}`
+        //       ],
+        //   }
+        //   list.push(data)
+        // }
+        // console.log(list, 'listlistlistlistlist')
+        // this.dateList = list
         this.selectDate = moment(e.startStr.dateStr).format('YYYY-MM-DD')
       },
       btn(index) {

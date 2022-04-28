@@ -27,7 +27,12 @@
       </view>
       <view class="information-one">
         <view class="information-one-left"> 手机号 </view>
-        <u-input style="flex: 1" placeholder="用于接受通知，请填写真实号码" v-model="phone" />
+        <u-input
+          style="flex: 1"
+          maxlength="11"
+          placeholder="用于接受通知，请填写真实号码"
+          v-model="phone"
+        />
       </view>
     </view>
 
@@ -59,10 +64,10 @@
     },
     onLoad(option = {}) {
       this.activityId = option.activityId || ''
-      this.getRoomDetail(option.id, option.activityId)
+      this.getRoomDetail(option.id, option.activityId, option.activityFlag)
     },
     methods: {
-      getRoomDetail(id, activityId) {
+      getRoomDetail(id, activityId, activityFlag) {
         let params = {
           packId: id,
         }
@@ -72,30 +77,48 @@
             activityId,
           }
         }
+        if (activityFlag) {
+          params = {
+            ...params,
+            activityFlag: 'Y',
+          }
+        }
         this.$api.home.packDetail(params).then((res = {}) => {
           this.roomDetail = res.packDetail || {}
           this.packRoomList = res.packRoomList || []
         })
       },
       gosubmit() {
-        let params = {
-          bnbId: this.roomDetail.bnbId,
-          orderType: 1,
-          payType: 1,
-          phone: this.phone,
-          productId: this.roomDetail.id,
-          quantity: this.num,
-          submitFlag: 'Y',
-          activityId: this.activityId,
+        var myreg = /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/
+        if (!myreg.test(this.phone)) {
+          return uni.showToast({ title: '请填写正确的手机号码', icon: 'none' })
         }
-        this.$api.home.validateOrder(params).then((res = {}) => {
-          uni.showToast({ title: '购买成功～' })
-          setTimeout(() => {
-            uni.switchTab({
-              url: '/pages/orders/orders',
-            })
-          }, 1500)
+        uni.showModal({
+          title: '提示',
+          content: '是否确认支付',
+          confirmColor: '#00bbcc',
+          success: (res) => {
+            if (res.confirm) {
+              let params = {
+                bnbId: this.roomDetail.bnbId,
+                orderType: 1,
+                payType: 1,
+                phone: this.phone,
+                productId: this.roomDetail.id,
+                quantity: this.num,
+                submitFlag: 'Y',
+                activityId: this.activityId,
+              }
+              this.$api.home.validateOrder(params).then((res = {}) => {
+                uni.showToast({ title: '购买成功～' })
+                setTimeout(() => {
+                  uni.navigateBack()
+                }, 1500)
+              })
+            }
+          },
         })
+
         // this.$api.home.mainPageOrder(params).then((res = {}) => {
         //
         // })

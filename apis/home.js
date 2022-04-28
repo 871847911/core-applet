@@ -86,6 +86,12 @@ export function makeRoomRate(params, ContentType) {
 export function queryOrder(params, ContentType) {
   return vm.$u.get(`${BASE_API}/checkInOrder/queryCheckInOrderList`, params, ContentType)
 }
+//订单
+export function queryOrderGeneralList(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/orderGeneral/queryOrderGeneralList`, params, ContentType)
+}
+
+
 
 //订单
 export function validateOrder(params, ContentType) {
@@ -105,6 +111,47 @@ export function queryCoupon(params, ContentType) {
 export function confirmCheckIn(params, ContentType) {
   return vm.$u.post(`${BASE_API}/checkInOrder/confirmCheckIn`, params, ContentType)
 }
+
+//订单
+export function checkInOrderCheckIn(params, ContentType) {
+  return vm.$u.post(`${BASE_API}/checkInOrder/checkIn`, params, ContentType)
+}
+
+//订单
+export function confirmCheckOut(params, ContentType) {
+  return vm.$u.post(`${BASE_API}/checkInOrder/confirmCheckOut`, params, ContentType)
+}
+
+//订单
+export function refuseCheckIn(params, ContentType) {
+  return vm.$u.post(`${BASE_API}/checkInOrder/refuseCheckIn`, params, ContentType)
+}
+
+//订单
+export function orderRefundInfoAdd(params, ContentType) {
+  return vm.$u.post(`${BASE_API}/orderGeneral/applyRefund`, params, ContentType)
+}
+
+//订单
+export function cancelApplyRefund(params, ContentType) {
+  return vm.$u.post(`${BASE_API}/orderGeneral/cancelApplyRefund`, params, ContentType)
+}
+
+//账单记录_查询
+export function billPage(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/bill/page`, params, ContentType)
+}
+
+
+//查询套餐价格
+export function getPackPrices(params, ContentType) {
+  return vm.$u.get(`${BASE_API}/mainPage/getPackPrices`, params, ContentType)
+}
+
+
+
+
+
 
 
 

@@ -53,7 +53,7 @@
         <!-- 我的订单 -->
         <view class="order">
           <view class="order-list">
-            <view class="order-list-one" @click="gomyorder()">
+            <view class="order-list-one" @click="goyuyue()">
               <view class="order-list-one-top">
                 <u-icon name="calendar" size="48"></u-icon>
               </view>
@@ -71,6 +71,12 @@
               </view>
               <view class="order-list-one-bottom"> 我的民宿 </view>
             </view>
+            <view class="order-list-one" @click="shouhou()">
+              <view class="order-list-one-top">
+                <u-icon name="phone" size="48"></u-icon>
+              </view>
+              <view class="order-list-one-bottom"> 售后/退款 </view>
+            </view>
             <view class="order-list-one" @click="gomyorder()">
               <view class="order-list-one-top">
                 <u-icon name="order" size="48"></u-icon>
@@ -79,12 +85,12 @@
             </view>
           </view>
         </view>
-        <view class="list-one" @tap="goaddress()">
+        <!-- <view class="list-one" @tap="goaddress()">
           <view class="list-one-left"> 商品收藏 </view>
           <view class="list-one-right">
             <image src="../../static/images/全部.png" mode=""></image>
           </view>
-        </view>
+        </view> -->
         <view class="list-one">
           <view class="list-one-left"> 系统版本 </view>
           <view class="list-one-right">1.0.0 </view>
@@ -134,6 +140,16 @@
     },
     onLoad() {},
     methods: {
+      goyuyue() {
+        uni.navigateTo({
+          url: '/pages/orders/yuyue',
+        })
+      },
+      shouhou() {
+        uni.navigateTo({
+          url: '/pages/orders/afterSale',
+        })
+      },
       getMoney() {
         this.$api.login.statisticsBill().then((res) => {
           this.dataSourse = res || {}

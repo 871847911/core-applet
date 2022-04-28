@@ -52,7 +52,7 @@
           </view>
           <view class="content-quota-bottom-title">
             <view class="content-quota-bottom-left">
-              {{ seckill.mainTitle + seckill.viceTitle }}
+              {{ seckill.mainTitle }}
             </view>
             <view class="content-quota-bottom-right">
               <image src="../../static/icon.png"></image>

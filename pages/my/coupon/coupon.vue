@@ -6,14 +6,24 @@
       <view class="title-left" :class="{ active: num == 2 }" @click="changeNum(2)"> 已过期 </view>
     </view>
     <view class="content" v-if="couponIdList && couponIdList.length > 0">
-      <view class="coupon-list" v-for="item in couponIdList" :key="item.id">
+      <view class="coupon-list" v-for="item in couponIdList" :key="item.id" @click="toBuy(item)">
         <view class="coupon-list-left">
           <image src="/static/icon.png"></image>
-          <text>{{ item.amount }}</text>
+          <text :style="{ color: num != 0 ? '#eee' : '#ff2d19' }">{{ item.amount }}</text>
         </view>
         <view class="coupon-list-center">
-          <view class="coupon-list-center-top"> {{ item.name }} </view>
-          <view class="coupon-list-center-bottom"> {{ item.createTime }} </view>
+          <view class="coupon-list-center-top">
+            {{ item.name }}{{ `${num == 1 ? '（已使用）' : num == 2 ? '（已过期）' : ''}` }}
+          </view>
+          <view v-if="num === 0" class="coupon-list-center-bottom">
+            购买时间：{{ item.createTime }}
+          </view>
+          <view v-if="num === 1" class="coupon-list-center-bottom">
+            使用时间：{{ item.updateTime }}
+          </view>
+          <view v-if="num === 2" class="coupon-list-center-bottom"
+            >过期时间： {{ item.updateTime }}
+          </view>
         </view>
         <!-- <view class="coupon-list-right">
           <image src="../../../static/images/house.png" mode=""></image>
@@ -38,6 +48,12 @@
       }
     },
     methods: {
+      toBuy() {
+        if (this.num != 0) return
+        uni.navigateTo({
+          url: `/pages/one/roomorder/roomorder?id=${3}`,
+        })
+      },
       changeNum(n) {
         this.num = n
         this.getData()
