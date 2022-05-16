@@ -39,7 +39,10 @@
           <view class="card-right-three">
             <view class="card-right-three-left">
               <image src="/static/icon.png"></image>
-              <text class="text1">{{ item.price }}</text> <text class="text2"></text>
+              <text class="text1">{{
+                item.status === 0 ? item.reservationPrice : item.price
+              }}</text>
+              <text class="text2"></text>
             </view>
             <view
               v-if="item.status === 0"
@@ -72,6 +75,7 @@
   import moment from 'moment'
   import config from '@/common/config.js'
   const { BASE_API } = config
+  import { mapState } from 'vuex'
   export default {
     components: {
       slFilter,
@@ -117,6 +121,11 @@
     onLoad() {
       this.getDateList()
     },
+    computed: {
+      ...mapState({
+        USERINFO: (state) => state.USERINFO, //用户信息
+      }),
+    },
     methods: {
       toPay(id, activityId) {
         uni.navigateTo({
@@ -127,16 +136,17 @@
         uni.showModal({
           title: '提示',
           confirmColor: '#00bbcc',
-          content: `是否花费${item.price}金米粒预约？`,
+          content: `是否花费${item.status === 0 ? item.reservationPrice : item.price}金米粒预约？`,
           success: (res) => {
             if (res.confirm) {
               let params = {
-                bnbId: item.bnbId,
                 orderType: 0,
                 payType: 1,
-                productId: item.packId,
+                productId: item.id,
                 submitFlag: 'Y',
                 activityId: item.id,
+                phone: this.USERINFO.phone,
+                quantity: 1,
               }
               this.$api.home.validateOrder(params).then((res = {}) => {
                 uni.showToast({ title: '预约成功～' })

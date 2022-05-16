@@ -158,7 +158,7 @@
       // 去往团建民宿
       gogroup() {
         uni.navigateTo({
-          url: '../one/scenicspotdetails/scenicspotdetails',
+          url: `../one/scenicspotdetails/scenicspotdetails?id=${this.roomDetail.bnbInfo.id}`,
         })
       },
       // 去往亲子页面

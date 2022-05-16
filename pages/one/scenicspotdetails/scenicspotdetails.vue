@@ -1,10 +1,5 @@
 <template>
-  <view class="warp">
-    <view>民宿名称：{{ roomDetail.name }}</view>
-    <view>电话：{{ roomDetail.tel }}</view>
-    <view>地区：{{ roomDetail.province }}{{ roomDetail.city }}{{ roomDetail.district }}</view>
-    <view>详细地址{{ roomDetail.address }}</view>
-  </view>
+  <view class="warp">{{ roomDetail.id }}</view>
 </template>
 <script>
   export default {
@@ -13,13 +8,13 @@
         roomDetail: {},
       }
     },
-    onLoad() {
-      this.getRoomDetail()
+    onLoad(option = {}) {
+      this.getRoomDetail(option.id)
     },
     methods: {
-      getRoomDetail() {
+      getRoomDetail(bnbId) {
         this.$api.home
-          .bnbInfo({ bnbId: 2 })
+          .bnbInfo({ bnbId })
           .then((res) => {
             this.roomDetail = res.bnbInfo
           })

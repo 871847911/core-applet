@@ -57,7 +57,7 @@
             <view class="content-quota-bottom-right">
               <image src="../../static/icon.png"></image>
               <text>
-                {{ seckill.price }}
+                {{ seckill.status === 0 ? seckill.reservationPrice : seckill.price }}
               </text>
             </view>
           </view>

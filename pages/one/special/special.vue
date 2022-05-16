@@ -13,7 +13,7 @@
         <view class="address-money">
           <view class="address-money-left">
             <image src="/static/icon.png"></image>
-            <text>{{ roomDetail.originalPrice }}</text>
+            <text>{{ status === 0 ? roomDetail.reservationPrice : roomDetail.originalPrice }}</text>
           </view>
           <!-- <view class="" style="width: 32rpx; height: 32rpx">
             <image
@@ -24,7 +24,9 @@
             <view class="" style="font-size: 16rpx; color: #333"> 收藏 </view>
           </view> -->
         </view>
-        <view class="address-title">{{ roomDetail.mainTitle }}{{ roomDetail.viceTitle }}</view>
+        <view class="address-title"
+          >{{ roomDetail.mainTitle }}{{ roomDetail.viceTitle || '' }}</view
+        >
         <view class="address-title-one">{{ roomDetail.description || '' }}</view>
 
         <view class="address-time">
@@ -260,6 +262,7 @@
   import Calendar from '@/components/mobile-calendar-simple/Calendar.vue'
   import config from '@/common/config.js'
   const { BASE_API } = config
+  import { mapState } from 'vuex'
 
   export default {
     components: {
@@ -290,6 +293,11 @@
         status: '',
         activityId: '',
       }
+    },
+    computed: {
+      ...mapState({
+        USERINFO: (state) => state.USERINFO, //用户信息
+      }),
     },
     onLoad(option = {}) {
       this.getRoomDetail(option.id, option.activityId)
@@ -425,12 +433,13 @@
           success: (res) => {
             if (res.confirm) {
               let params = {
-                bnbId: this.roomDetail.bnbId,
                 orderType: 0,
                 payType: 1,
-                productId: this.roomDetail.packId,
+                productId: this.activityId,
                 submitFlag: 'Y',
                 activityId: this.activityId,
+                phone: this.USERINFO.phone,
+                quantity: 1,
               }
               this.$api.home.validateOrder(params).then((res = {}) => {
                 uni.showToast({ title: '预约成功～' })
